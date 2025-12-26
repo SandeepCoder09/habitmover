@@ -1,0 +1,162 @@
+:root {
+  --bg-light: #f4f6fb;
+  --bg-dark: #0f1220;
+  --card-light: rgba(255, 255, 255, 0.6);
+  --card-dark: rgba(25, 25, 45, 0.6);
+  --text-light: #111;
+  --text-dark: #fff;
+  --accent: #6c63ff;
+}
+
+/* Reset */
+* {
+  box-sizing: border-box;
+  font-family: Inter, system-ui, -apple-system;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-light);
+  color: var(--text-light);
+}
+
+body.dark {
+  background: var(--bg-dark);
+  color: var(--text-dark);
+}
+
+/* Topbar */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.topbar button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: inherit;
+}
+
+/* Container */
+.container {
+  padding: 20px;
+  max-width: 420px;
+  margin: auto;
+}
+
+/* Card */
+.card {
+  background: var(--card-light);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+body.dark .card {
+  background: var(--card-dark);
+}
+
+/* Profile */
+.profile-card {
+  text-align: center;
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  margin: 0 auto 16px;
+}
+
+label {
+  display: block;
+  text-align: left;
+  font-size: 13px;
+  margin: 12px 0 6px;
+  opacity: 0.7;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+}
+
+button#saveBtn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+#msg {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.avatar-wrap {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 16px;
+}
+
+.avatar-wrap img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #ddd;
+}
+
+.avatar-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 50%;
+  padding: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+hr {
+  margin: 20px 0;
+  border: none;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+body.dark hr {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+h3 {
+  margin: 0 0 10px;
+  font-size: 15px;
+}

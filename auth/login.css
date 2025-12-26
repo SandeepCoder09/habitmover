@@ -1,0 +1,115 @@
+:root {
+  --bg-light: #f4f6fb;
+  --bg-dark: #0f1220;
+
+  --card-light: rgba(255, 255, 255, 0.6);
+  --card-dark: rgba(25, 25, 45, 0.6);
+
+  --text-light: #111;
+  --text-dark: #ffffff;
+
+  --accent: #6c63ff;
+  --blur: blur(18px);
+}
+
+/* Reset */
+* {
+  box-sizing: border-box;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-light);
+  color: var(--text-light);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark {
+  background: var(--bg-dark);
+  color: var(--text-dark);
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: inherit;
+}
+
+.login-card {
+  width: 320px;
+  padding: 28px;
+  border-radius: 18px;
+
+  /* Glass effect */
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  background: var(--card-light);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+
+body.dark .login-card {
+  background: var(--card-dark);
+}
+
+.login-card h1 {
+  margin: 0;
+  text-align: center;
+  font-size: 24px;
+}
+
+.muted {
+  text-align: center;
+  font-size: 14px;
+  opacity: 0.7;
+  margin: 8px 0 20px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+}
+
+button#loginBtn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+#msg {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.remember-row {
+  margin: 8px 0 14px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.remember-row input {
+  margin-right: 6px;
+}

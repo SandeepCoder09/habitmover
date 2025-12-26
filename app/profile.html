@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Habit Mover — Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Remix Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="profile.css" />
+  </head>
+  <body>
+    <!-- Top Bar -->
+    <header class="topbar">
+      <button id="backBtn" aria-label="Back">
+        <span class="ri-arrow-left-line"></span>
+      </button>
+      <h1>Profile</h1>
+      <button id="logoutBtn" aria-label="Logout">
+        <span class="ri-logout-box-r-line"></span>
+      </button>
+    </header>
+
+    <!-- Profile Card -->
+    <main class="container">
+      <div class="card profile-card">
+
+        <!-- Avatar -->
+        <div class="avatar-wrap">
+          <img id="avatarImg" />
+          <label class="avatar-btn">
+            <span class="ri-camera-line"></span>
+            <input type="file" id="avatarInput" accept="image/*" hidden />
+          </label>
+        </div>
+      
+        <!-- Basic Info -->
+        <label>Name</label>
+        <input type="text" id="nameInput" />
+      
+        <label>Email</label>
+        <input type="email" id="emailInput" disabled />
+      
+        <button id="saveProfileBtn">Save Profile</button>
+      
+        <hr />
+      
+        <!-- Change Password -->
+        <h3>Change Password</h3>
+      
+        <input type="password" id="currentPassword" placeholder="Current password" />
+        <input type="password" id="newPassword" placeholder="New password" />
+      
+        <button id="changePasswordBtn">Change Password</button>
+      
+        <p id="msg"></p>
+      </div>      
+    </main>
+
+    <script src="profile.js"></script>
+  </body>
+</html>
