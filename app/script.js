@@ -10,7 +10,7 @@ const SNOOZE_KEY = "HabitMover_snoozed";
 const HISTORY_KEY = "HabitMover_history";
 
 /* =====================================================
-   OFFLINE BACKUP (INDEXEDDB) — SAFE FALLBACK
+   OFFLINE BACKUP (INDEXEDDB)
 ===================================================== */
 const DB_NAME = "HabitMoverDB";
 const DB_VERSION = 1;
@@ -36,7 +36,7 @@ async function backupTasksToDB(tasks) {
     const tx = db.transaction(STORE_NAME, "readwrite");
     const store = tx.objectStore(STORE_NAME);
     tasks.forEach((t, i) => store.put({ ...t, id: i }));
-  } catch (e) { }
+  } catch {}
 }
 
 async function restoreTasksFromDB() {
@@ -63,11 +63,16 @@ if (!auth || !auth.loggedIn) {
 }
 
 /* =====================================================
-   ELEMENTS
+   ELEMENTS (MATCH HTML)
 ===================================================== */
-const taskName = document.getElementById("taskName");
-const taskTime = document.getElementById("taskTime");
 const addTaskBtn = document.getElementById("addTaskBtn");
+const addModal = document.getElementById("addModal");
+const closeModalBtn = document.querySelector(".close-modal");
+
+const modalTaskName = document.getElementById("modalTaskName");
+const modalTaskTime = document.getElementById("modalTaskTime");
+const modalAddBtn = document.getElementById("modalAddBtn");
+
 const taskList = document.getElementById("taskList");
 const emptyState = document.getElementById("emptyState");
 
@@ -93,6 +98,21 @@ themeToggle.onclick = () => {
   themeToggle.innerHTML = isDark
     ? `<span class="ri-sun-line"></span>`
     : `<span class="ri-moon-line"></span>`;
+};
+
+/* =====================================================
+   MODAL OPEN / CLOSE
+===================================================== */
+addTaskBtn.onclick = () => {
+  addModal.classList.remove("hidden");
+};
+
+closeModalBtn.onclick = () => {
+  addModal.classList.add("hidden");
+};
+
+addModal.onclick = e => {
+  if (e.target === addModal) addModal.classList.add("hidden");
 };
 
 /* =====================================================
@@ -128,30 +148,42 @@ function todayKey() {
 }
 
 /* =====================================================
+   DAILY HISTORY (FIXED)
+===================================================== */
+function saveDailyHistory() {
+  const today = todayKey();
+  let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+
+  if (history.some(h => h.date === today)) return;
+
+  history.push({
+    date: today,
+    total: tasks.length,
+    done: tasks.filter(t => t.done).length
+  });
+
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+}
+
+/* =====================================================
    STREAK + PROGRESS
 ===================================================== */
-let streak =
-  JSON.parse(localStorage.getItem(STREAK_KEY)) || {
-    count: 0,
-    lastDate: null
-  };
+let streak = JSON.parse(localStorage.getItem(STREAK_KEY)) || {
+  count: 0,
+  lastDate: null
+};
 
 function updateStreak() {
   const today = todayKey();
   if (streak.lastDate === today) return;
+  if (!tasks.some(t => t.done)) return;
 
-  const anyDone = tasks.some(t => t.done);
-  if (!anyDone) return;
-
-  if (!streak.lastDate) {
-    streak.count = 1;
-  } else {
+  if (!streak.lastDate) streak.count = 1;
+  else {
     const diff =
       (new Date(today) - new Date(streak.lastDate)) /
       (1000 * 60 * 60 * 24);
-
-    if (diff === 1) streak.count++;
-    else if (diff > 1) streak.count = 1;
+    streak.count = diff === 1 ? streak.count + 1 : 1;
   }
 
   streak.lastDate = today;
@@ -166,13 +198,13 @@ function updateProgress() {
     return;
   }
 
-  const doneCount = tasks.filter(t => t.done).length;
-  const percent = Math.round((doneCount / tasks.length) * 100);
+  const done = tasks.filter(t => t.done).length;
+  const percent = Math.round((done / tasks.length) * 100);
 
   progressFill.style.width = percent + "%";
   progressPercent.textContent = percent + "%";
 
-  if (doneCount > 0) updateStreak();
+  if (done > 0) updateStreak();
   streakCountEl.textContent = streak.count;
 }
 
@@ -185,9 +217,9 @@ function renderTasks() {
   if (tasks.length === 0) {
     emptyState.style.display = "block";
     return;
-  } else {
-    emptyState.style.display = "none";
   }
+
+  emptyState.style.display = "none";
 
   tasks.forEach((t, i) => {
     const div = document.createElement("div");
@@ -206,15 +238,12 @@ function renderTasks() {
       </button>
     `;
 
-    if (t.done) {
-      requestAnimationFrame(() => div.classList.add("done"));
-    }
-
     div.querySelector("input").onchange = () => {
       t.done = !t.done;
       saveTasks();
       renderTasks();
       updateProgress();
+      saveDailyHistory();
     };
 
     div.querySelector("button").onclick = () => {
@@ -222,6 +251,7 @@ function renderTasks() {
       saveTasks();
       renderTasks();
       updateProgress();
+      saveDailyHistory();
     };
 
     taskList.appendChild(div);
@@ -229,23 +259,26 @@ function renderTasks() {
 }
 
 /* =====================================================
-   ADD TASK
+   ADD TASK (MODAL BUTTON)
 ===================================================== */
-addTaskBtn.onclick = () => {
-  if (!taskName.value || !taskTime.value) return;
+modalAddBtn.onclick = () => {
+  if (!modalTaskName.value || !modalTaskTime.value) return;
 
   tasks.push({
-    name: taskName.value.trim(),
-    time: taskTime.value,
+    name: modalTaskName.value.trim(),
+    time: modalTaskTime.value,
     done: false
   });
 
-  taskName.value = "";
-  taskTime.value = "";
+  modalTaskName.value = "";
+  modalTaskTime.value = "";
 
   saveTasks();
   renderTasks();
   updateProgress();
+  saveDailyHistory();
+
+  addModal.classList.add("hidden");
 };
 
 /* =====================================================
@@ -253,157 +286,16 @@ addTaskBtn.onclick = () => {
 ===================================================== */
 logoutBtn.onclick = () => {
   localStorage.removeItem(AUTH_KEY);
-  localStorage.removeItem("HabitMover_remember");
   window.location.href = "../auth/login.html";
 };
 
 /* =====================================================
-   REMINDERS (SOUND + SNOOZE)
+   SPLASH SCREEN
 ===================================================== */
-const sound = new Audio("../assets/sounds/reminder.mp3");
-
-let remindedToday =
-  JSON.parse(localStorage.getItem(REMINDER_KEY)) || {
-    date: todayKey(),
-    tasks: []
-  };
-
-if (remindedToday.date !== todayKey()) {
-  remindedToday = { date: todayKey(), tasks: [] };
-  localStorage.setItem(REMINDER_KEY, JSON.stringify(remindedToday));
-}
-
-let snoozed =
-  JSON.parse(localStorage.getItem(SNOOZE_KEY)) || [];
-
-function showReminder(task) {
-  sound.play().catch(() => { });
-
-  const popup = document.createElement("div");
-  popup.className = "reminder-popup";
-  popup.innerHTML = `
-    <strong>⏰ ${task.name}</strong>
-    <p>${task.time}</p>
-    <button class="done">Done</button>
-    <button class="snooze" data-min="5">Snooze 5m</button>
-    <button class="snooze" data-min="10">Snooze 10m</button>
-  `;
-
-  popup.querySelector(".done").onclick = () => {
-    task.done = true;
-    saveTasks();
-    renderTasks();
-    updateProgress();
-    popup.remove();
-  };
-
-  popup.querySelectorAll(".snooze").forEach(btn => {
-    btn.onclick = () => {
-      snoozed.push({
-        name: task.name,
-        fireAt: Date.now() + Number(btn.dataset.min) * 60000
-      });
-      localStorage.setItem(SNOOZE_KEY, JSON.stringify(snoozed));
-      popup.remove();
-    };
-  });
-
-  document.body.appendChild(popup);
-}
-
-/* =====================================================
-   CHECK EVERY 30 SECONDS
-===================================================== */
-setInterval(() => {
-  const now = new Date();
-  const currentTime =
-    now.getHours().toString().padStart(2, "0") +
-    ":" +
-    now.getMinutes().toString().padStart(2, "0");
-
-  tasks.forEach(task => {
-    if (
-      !task.done &&
-      task.time === currentTime &&
-      !remindedToday.tasks.includes(task.name)
-    ) {
-      showReminder(task);
-      remindedToday.tasks.push(task.name);
-      localStorage.setItem(REMINDER_KEY, JSON.stringify(remindedToday));
-    }
-  });
-
-  const nowMs = Date.now();
-  snoozed = snoozed.filter(s => {
-    if (s.fireAt <= nowMs) {
-      const task = tasks.find(t => t.name === s.name && !t.done);
-      if (task) showReminder(task);
-      return false;
-    }
-    return true;
-  });
-  localStorage.setItem(SNOOZE_KEY, JSON.stringify(snoozed));
-}, 30000);
-
-/* =====================================================
-   DAILY HISTORY
-===================================================== */
-function saveDailyHistory() {
-  let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-  const today = todayKey();
-
-  if (history.some(h => h.date === today)) return;
-
-  history.push({
-    date: today,
-    total: tasks.length,
-    done: tasks.filter(t => t.done).length
-  });
-
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-}
-
-/* =====================================================
-   DAILY PWA NOTIFICATION (ONCE / DAY)
-===================================================== */
-if ("Notification" in window && Notification.permission === "default") {
-  Notification.requestPermission();
-}
-
-const lastNotify = localStorage.getItem("HabitMover_notifyDate");
-if (lastNotify !== todayKey() && Notification.permission === "granted") {
-  new Notification("Habit Mover", {
-    body: "Time to complete your habits 💪",
-    icon: "../habit-mover.png"
-  });
-  localStorage.setItem("HabitMover_notifyDate", todayKey());
-}
-
-/* =====================================================
-   SPLASH SCREEN FIX (SAFE)
-===================================================== */
-function hideSplash() {
+window.addEventListener("load", () => {
   const splash = document.getElementById("splash");
   if (splash) splash.style.display = "none";
-}
-
-// 1️⃣ Hide splash when DOM is ready
-document.addEventListener("DOMContentLoaded", hideSplash);
-
-// 2️⃣ Failsafe: hide splash after 2 seconds no matter what
-setTimeout(hideSplash, 2000);
-
-/* =====================================================
-   GLOBAL + BUTTON FIX
-===================================================== */
-const addBtn = document.getElementById("addTaskBtn");
-const addModal = document.getElementById("addModal");
-
-if (addBtn && !addModal) {
-  addBtn.onclick = () => {
-    window.location.href = "index.html";
-  };
-}
+});
 
 /* =====================================================
    INIT
