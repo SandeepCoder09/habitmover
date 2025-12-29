@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Habit Mover – History</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Main styles -->
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="history.css" />
+
+  <!-- Remix Icons -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
+    rel="stylesheet"
+  />
+</head>
+<body>
+
+<header class="topbar">
+  <h1>History</h1>
+</header>
+
+<main class="container">
+
+  <div id="historyList" class="history-list">
+    <!-- History cards injected here -->
+  </div>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a href="index.html" class="nav-item">
+    <span class="ri-home-5-line"></span>
+    <small>Home</small>
+  </a>
+
+  <a href="stats.html" class="nav-item">
+    <span class="ri-bar-chart-line"></span>
+    <small>Stats</small>
+  </a>
+
+  <button class="nav-add" disabled>
+    <span class="ri-add-line"></span>
+  </button>
+
+  <a href="history.html" class="nav-item active">
+    <span class="ri-time-line"></span>
+    <small>History</small>
+  </a>
+
+  <a href="profile.html" class="nav-item">
+    <span class="ri-user-line"></span>
+    <small>Profile</small>
+  </a>
+</nav>
+
+<!-- HISTORY SCRIPT (SAFE, LOCAL ONLY) -->
+<script>
+  const HISTORY_KEY = "HabitMover_history";
+  const history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+
+  const list = document.getElementById("historyList");
+
+  if (history.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <span class="ri-calendar-line"></span>
+        <h3>No history yet</h3>
+        <p>Complete habits daily to build your history 📅</p>
+      </div>
+    `;
+  } else {
+    history
+      .slice()
+      .reverse()
+      .forEach(day => {
+        const percent = day.total
+          ? Math.round((day.done / day.total) * 100)
+          : 0;
+
+        const card = document.createElement("div");
+        card.className = "card history-card";
+        card.innerHTML = `
+          <div class="history-top">
+            <strong>${day.date}</strong>
+            <span>${percent}%</span>
+          </div>
+
+          <div class="history-bar">
+            <div class="fill" style="width:${percent}%"></div>
+          </div>
+
+          <small>${day.done} of ${day.total} habits completed</small>
+        `;
+        list.appendChild(card);
+      });
+  }
+</script>
+
+</body>
+</html>
