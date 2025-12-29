@@ -4,54 +4,41 @@
 const AUTH_KEY = "HabitMover_auth";
 const TASK_KEY = "HabitMover_tasks";
 const THEME_KEY = "HabitMover_theme";
-const REMINDER_KEY = "HabitMover_remindedToday";
 const STREAK_KEY = "HabitMover_streak";
-const SNOOZE_KEY = "HabitMover_snoozed";
 const HISTORY_KEY = "HabitMover_history";
 
 /* =====================================================
-   OFFLINE BACKUP (INDEXEDDB)
+   OFFLINE BACKUP (INDEXEDDB - PREVENTS GHOST TASKS)
 ===================================================== */
 const DB_NAME = "HabitMoverDB";
-const DB_VERSION = 1;
 const STORE_NAME = "tasks";
 
-function openDB() {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, DB_VERSION);
-    req.onupgradeneeded = e => {
-      const db = e.target.result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: "id" });
-      }
-    };
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject();
-  });
-}
-
-async function backupTasksToDB(tasks) {
-  try {
-    const db = await openDB();
-    const tx = db.transaction(STORE_NAME, "readwrite");
-    const store = tx.objectStore(STORE_NAME);
-    tasks.forEach((t, i) => store.put({ ...t, id: i }));
-  } catch {}
-}
-
-async function restoreTasksFromDB() {
-  try {
-    const db = await openDB();
-    const tx = db.transaction(STORE_NAME, "readonly");
-    const store = tx.objectStore(STORE_NAME);
-    const req = store.getAll();
-    return new Promise(res => {
-      req.onsuccess = () => res(req.result || []);
-      req.onerror = () => res([]);
+async function openDB() {
+    return new Promise((resolve, reject) => {
+        const req = indexedDB.open(DB_NAME, 1);
+        req.onupgradeneeded = e => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+                db.createObjectStore(STORE_NAME, { keyPath: "id", autoIncrement: true });
+            }
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject();
     });
-  } catch {
-    return [];
-  }
+}
+
+/**
+ * FIXED: Syncs IndexedDB with current state. 
+ * Clears old entries so deleted tasks don't reappear on refresh.
+ */
+async function syncBackup(tasksToStore) {
+    try {
+        const db = await openDB();
+        const tx = db.transaction(STORE_NAME, "readwrite");
+        const store = tx.objectStore(STORE_NAME);
+        await store.clear(); 
+        tasksToStore.forEach(t => store.add(t));
+    } catch (err) { console.warn("Offline backup sync failed", err); }
 }
 
 /* =====================================================
@@ -59,247 +46,165 @@ async function restoreTasksFromDB() {
 ===================================================== */
 const auth = JSON.parse(localStorage.getItem(AUTH_KEY));
 if (!auth || !auth.loggedIn) {
-  window.location.href = "../auth/login.html";
+    window.location.replace("../auth/login.html");
 }
 
 /* =====================================================
-   ELEMENTS (MATCH HTML)
+   ELEMENTS (DOM)
 ===================================================== */
 const addTaskBtn = document.getElementById("addTaskBtn");
 const addModal = document.getElementById("addModal");
 const closeModalBtn = document.querySelector(".close-modal");
-
 const modalTaskName = document.getElementById("modalTaskName");
 const modalTaskTime = document.getElementById("modalTaskTime");
 const modalAddBtn = document.getElementById("modalAddBtn");
-
 const taskList = document.getElementById("taskList");
 const emptyState = document.getElementById("emptyState");
-
 const logoutBtn = document.getElementById("logoutBtn");
 const themeToggle = document.getElementById("themeToggle");
-
 const progressFill = document.getElementById("progressFill");
 const progressPercent = document.getElementById("progressPercent");
 const streakCountEl = document.getElementById("streakCount");
 
 /* =====================================================
-   THEME
-===================================================== */
-if (localStorage.getItem(THEME_KEY) === "dark") {
-  document.body.classList.add("dark");
-  themeToggle.innerHTML = `<span class="ri-sun-line"></span>`;
-}
-
-themeToggle.onclick = () => {
-  document.body.classList.toggle("dark");
-  const isDark = document.body.classList.contains("dark");
-  localStorage.setItem(THEME_KEY, isDark ? "dark" : "light");
-  themeToggle.innerHTML = isDark
-    ? `<span class="ri-sun-line"></span>`
-    : `<span class="ri-moon-line"></span>`;
-};
-
-/* =====================================================
-   MODAL OPEN / CLOSE
-===================================================== */
-addTaskBtn.onclick = () => {
-  addModal.classList.remove("hidden");
-};
-
-closeModalBtn.onclick = () => {
-  addModal.classList.add("hidden");
-};
-
-addModal.onclick = e => {
-  if (e.target === addModal) addModal.classList.add("hidden");
-};
-
-/* =====================================================
-   TASK DATA
+   STATE & DATA HANDLING
 ===================================================== */
 let tasks = JSON.parse(localStorage.getItem(TASK_KEY)) || [];
 
-if (tasks.length === 0) {
-  restoreTasksFromDB().then(dbTasks => {
-    if (dbTasks.length) {
-      tasks = dbTasks.map(t => ({
-        name: t.name,
-        time: t.time,
-        done: t.done
-      }));
-      saveTasks();
-      renderTasks();
-      updateProgress();
-    }
-  });
+/**
+ * Saves current task list to LocalStorage and IndexedDB backup.
+ */
+function saveAll() {
+    localStorage.setItem(TASK_KEY, JSON.stringify(tasks));
+    syncBackup(tasks); 
+    updateProgress();
 }
 
-function saveTasks() {
-  localStorage.setItem(TASK_KEY, JSON.stringify(tasks));
-  backupTasksToDB(tasks);
-}
-
-/* =====================================================
-   DATE HELPERS
-===================================================== */
-function todayKey() {
-  return new Date().toISOString().split("T")[0];
-}
-
-/* =====================================================
-   DAILY HISTORY (FIXED)
-===================================================== */
-function saveDailyHistory() {
-  const today = todayKey();
-  let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-
-  if (history.some(h => h.date === today)) return;
-
-  history.push({
-    date: today,
-    total: tasks.length,
-    done: tasks.filter(t => t.done).length
-  });
-
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-}
-
-/* =====================================================
-   STREAK + PROGRESS
-===================================================== */
-let streak = JSON.parse(localStorage.getItem(STREAK_KEY)) || {
-  count: 0,
-  lastDate: null
-};
-
-function updateStreak() {
-  const today = todayKey();
-  if (streak.lastDate === today) return;
-  if (!tasks.some(t => t.done)) return;
-
-  if (!streak.lastDate) streak.count = 1;
-  else {
-    const diff =
-      (new Date(today) - new Date(streak.lastDate)) /
-      (1000 * 60 * 60 * 24);
-    streak.count = diff === 1 ? streak.count + 1 : 1;
-  }
-
-  streak.lastDate = today;
-  localStorage.setItem(STREAK_KEY, JSON.stringify(streak));
-}
-
+/**
+ * Updates the progress bar and streak counter.
+ */
 function updateProgress() {
-  if (tasks.length === 0) {
-    progressFill.style.width = "0%";
-    progressPercent.textContent = "0%";
+    const streak = JSON.parse(localStorage.getItem(STREAK_KEY)) || { count: 0 };
     streakCountEl.textContent = streak.count;
-    return;
-  }
 
-  const done = tasks.filter(t => t.done).length;
-  const percent = Math.round((done / tasks.length) * 100);
+    if (tasks.length === 0) {
+        progressFill.style.width = "0%";
+        progressPercent.textContent = "0%";
+        return;
+    }
 
-  progressFill.style.width = percent + "%";
-  progressPercent.textContent = percent + "%";
-
-  if (done > 0) updateStreak();
-  streakCountEl.textContent = streak.count;
+    const doneCount = tasks.filter(t => t.done).length;
+    const percent = Math.round((doneCount / tasks.length) * 100);
+    progressFill.style.width = percent + "%";
+    progressPercent.textContent = percent + "%";
 }
 
 /* =====================================================
-   RENDER TASKS
+   RENDER TASKS (MATCHES ENHANCED CSS STRUCTURE)
 ===================================================== */
 function renderTasks() {
-  taskList.innerHTML = "";
+    taskList.innerHTML = "";
+    emptyState.style.display = tasks.length === 0 ? "block" : "none";
 
-  if (tasks.length === 0) {
-    emptyState.style.display = "block";
-    return;
-  }
+    tasks.forEach((t, i) => {
+        const card = document.createElement("div");
+        card.className = `card task ${t.done ? "done" : ""}`;
+        card.innerHTML = `
+            <div class="task-left">
+                <input type="checkbox" ${t.done ? "checked" : ""}>
+                <div class="task-info">
+                    <strong>${t.name}</strong><br/>
+                    <small><i class="ri-time-line"></i> ${t.time || "--:--"}</small>
+                </div>
+            </div>
+            <button class="del-btn" aria-label="Delete">
+                <span class="ri-delete-bin-line"></span>
+            </button>
+        `;
 
-  emptyState.style.display = "none";
+        // Handle Status Change
+        card.querySelector("input").onchange = () => {
+            t.done = !t.done;
+            saveAll();
+            renderTasks();
+        };
 
-  tasks.forEach((t, i) => {
-    const div = document.createElement("div");
-    div.className = "card task";
+        // Handle Deletion
+        card.querySelector(".del-btn").onclick = () => {
+            tasks.splice(i, 1);
+            saveAll();
+            renderTasks();
+        };
 
-    div.innerHTML = `
-      <div class="task-left">
-        <input type="checkbox" ${t.done ? "checked" : ""} />
-        <div>
-          <strong>${t.name}</strong><br/>
-          <small>${t.time}</small>
-        </div>
-      </div>
-      <button aria-label="Delete">
-        <span class="ri-delete-bin-line"></span>
-      </button>
-    `;
-
-    div.querySelector("input").onchange = () => {
-      t.done = !t.done;
-      saveTasks();
-      renderTasks();
-      updateProgress();
-      saveDailyHistory();
-    };
-
-    div.querySelector("button").onclick = () => {
-      tasks.splice(i, 1);
-      saveTasks();
-      renderTasks();
-      updateProgress();
-      saveDailyHistory();
-    };
-
-    taskList.appendChild(div);
-  });
+        taskList.appendChild(card);
+    });
 }
 
 /* =====================================================
-   ADD TASK (MODAL BUTTON)
+   EVENTS
 ===================================================== */
+
+// Modal: Add New Habit
 modalAddBtn.onclick = () => {
-  if (!modalTaskName.value || !modalTaskTime.value) return;
+    const name = modalTaskName.value.trim();
+    if (!name) return;
 
-  tasks.push({
-    name: modalTaskName.value.trim(),
-    time: modalTaskTime.value,
-    done: false
-  });
+    tasks.push({ 
+        name, 
+        time: modalTaskTime.value, 
+        done: false 
+    });
 
-  modalTaskName.value = "";
-  modalTaskTime.value = "";
-
-  saveTasks();
-  renderTasks();
-  updateProgress();
-  saveDailyHistory();
-
-  addModal.classList.add("hidden");
+    modalTaskName.value = "";
+    modalTaskTime.value = "";
+    addModal.classList.add("hidden");
+    
+    saveAll();
+    renderTasks();
 };
 
-/* =====================================================
-   LOGOUT
-===================================================== */
+// Modal: UI Controls
+addTaskBtn.onclick = () => {
+    addModal.classList.remove("hidden");
+    setTimeout(() => modalTaskName.focus(), 100);
+};
+
+closeModalBtn.onclick = () => addModal.classList.add("hidden");
+
+// Theme Toggle
+themeToggle.onclick = () => {
+    const isDark = document.body.classList.toggle("dark");
+    localStorage.setItem(THEME_KEY, isDark ? "dark" : "light");
+    themeToggle.innerHTML = isDark 
+        ? '<span class="ri-sun-line"></span>' 
+        : '<span class="ri-moon-line"></span>';
+};
+
+// Logout: Redirects with replace to prevent "Back" button navigation
 logoutBtn.onclick = () => {
-  localStorage.removeItem(AUTH_KEY);
-  window.location.href = "../auth/login.html";
+    localStorage.removeItem(AUTH_KEY);
+    window.location.replace("../auth/login.html");
 };
 
 /* =====================================================
-   SPLASH SCREEN
+   INITIALIZATION
 ===================================================== */
-window.addEventListener("load", () => {
-  const splash = document.getElementById("splash");
-  if (splash) splash.style.display = "none";
-});
+window.onload = () => {
+    // Hide Splash Screen
+    const splash = document.getElementById("splash");
+    if (splash) {
+        setTimeout(() => {
+            splash.style.opacity = "0";
+            setTimeout(() => splash.style.display = "none", 500);
+        }, 600);
+    }
 
-/* =====================================================
-   INIT
-===================================================== */
-renderTasks();
-updateProgress();
-saveDailyHistory();
+    // Load Theme Preference
+    if (localStorage.getItem(THEME_KEY) === "dark") {
+        document.body.classList.add("dark");
+        themeToggle.innerHTML = '<span class="ri-sun-line"></span>';
+    }
+
+    renderTasks();
+    updateProgress();
+};
