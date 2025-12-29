@@ -10,6 +10,51 @@ const SNOOZE_KEY = "HabitMover_snoozed";
 const HISTORY_KEY = "HabitMover_history";
 
 /* =====================================================
+   OFFLINE BACKUP (INDEXEDDB) — SAFE FALLBACK
+===================================================== */
+const DB_NAME = "HabitMoverDB";
+const DB_VERSION = 1;
+const STORE_NAME = "tasks";
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME, { keyPath: "id" });
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject();
+  });
+}
+
+async function backupTasksToDB(tasks) {
+  try {
+    const db = await openDB();
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    const store = tx.objectStore(STORE_NAME);
+    tasks.forEach((t, i) => store.put({ ...t, id: i }));
+  } catch (e) { }
+}
+
+async function restoreTasksFromDB() {
+  try {
+    const db = await openDB();
+    const tx = db.transaction(STORE_NAME, "readonly");
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.getAll();
+    return new Promise(res => {
+      req.onsuccess = () => res(req.result || []);
+      req.onerror = () => res([]);
+    });
+  } catch {
+    return [];
+  }
+}
+
+/* =====================================================
    AUTH GUARD
 ===================================================== */
 const auth = JSON.parse(localStorage.getItem(AUTH_KEY));
@@ -55,8 +100,24 @@ themeToggle.onclick = () => {
 ===================================================== */
 let tasks = JSON.parse(localStorage.getItem(TASK_KEY)) || [];
 
+if (tasks.length === 0) {
+  restoreTasksFromDB().then(dbTasks => {
+    if (dbTasks.length) {
+      tasks = dbTasks.map(t => ({
+        name: t.name,
+        time: t.time,
+        done: t.done
+      }));
+      saveTasks();
+      renderTasks();
+      updateProgress();
+    }
+  });
+}
+
 function saveTasks() {
   localStorage.setItem(TASK_KEY, JSON.stringify(tasks));
+  backupTasksToDB(tasks);
 }
 
 /* =====================================================
@@ -116,7 +177,7 @@ function updateProgress() {
 }
 
 /* =====================================================
-   RENDER TASKS (WITH EMPTY STATE + ANIMATION)
+   RENDER TASKS
 ===================================================== */
 function renderTasks() {
   taskList.innerHTML = "";
@@ -285,7 +346,7 @@ setInterval(() => {
 }, 30000);
 
 /* =====================================================
-   DAILY HISTORY (FOR STATS)
+   DAILY HISTORY
 ===================================================== */
 function saveDailyHistory() {
   let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
@@ -300,6 +361,22 @@ function saveDailyHistory() {
   });
 
   localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+}
+
+/* =====================================================
+   DAILY PWA NOTIFICATION (ONCE / DAY)
+===================================================== */
+if ("Notification" in window && Notification.permission === "default") {
+  Notification.requestPermission();
+}
+
+const lastNotify = localStorage.getItem("HabitMover_notifyDate");
+if (lastNotify !== todayKey() && Notification.permission === "granted") {
+  new Notification("Habit Mover", {
+    body: "Time to complete your habits 💪",
+    icon: "../habit-mover.png"
+  });
+  localStorage.setItem("HabitMover_notifyDate", todayKey());
 }
 
 /* =====================================================
