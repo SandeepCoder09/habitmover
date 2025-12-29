@@ -292,6 +292,61 @@ body.dark .card {
     }
 }
 
+/* =====================================================
+   TASK CHECKBOX → CIRCULAR RADIO STYLE
+===================================================== */
+
+.task input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 0, 0, 0.25);
+    background: transparent;
+    cursor: pointer;
+    display: grid;
+    place-content: center;
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+}
+
+/* Dark mode border */
+body.dark .task input[type="checkbox"] {
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Inner dot */
+.task input[type="checkbox"]::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fff;
+    transform: scale(0);
+    transition: transform 0.2s ease;
+}
+
+/* Checked state */
+.task input[type="checkbox"]:checked {
+    background: linear-gradient(135deg, #4f46e5, #6c63ff);
+    border-color: transparent;
+}
+
+/* Show inner dot when checked */
+.task input[type="checkbox"]:checked::before {
+    transform: scale(1);
+}
+
+/* Press feedback */
+.task input[type="checkbox"]:active {
+    transform: scale(0.9);
+}
+
+.task.done {
+    opacity: 0.55;
+    transform: scale(0.97);
+}
+
 /* ===================================================== REMINDER POPUP ===================================================== */
 .reminder-popup {
     position: fixed;
