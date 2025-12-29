@@ -87,10 +87,10 @@
     </main
 
     <button id="installBtn" hidden>Install App</button>
-
-    
+<!-- main Script -->
     <script src="script.js"></script>
 
+    <!-- service worker js -->
     <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
@@ -98,5 +98,25 @@
     });
   }
 </script>
+
+    <!-- install button js -->
+    <script>
+  let deferredPrompt;
+  const btn = document.getElementById("installBtn");
+
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    btn.hidden = false;
+
+    btn.addEventListener("click", async () => {
+      btn.hidden = true;
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+    });
+  });
+</script>
+
   </body>
 </html>
