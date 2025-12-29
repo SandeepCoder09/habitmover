@@ -1,714 +1,245 @@
-/* ===================================================== ROOT VARIABLES (HABIT MOVER) ===================================================== */
+/* ===================================================== 
+   ROOT VARIABLES (STAY THE SAME) 
+===================================================== */
 :root {
     --bg-light: #f4f6fb;
     --bg-dark: #0f1220;
-    --glass-light: rgba(255, 255, 255, 0.55);
-    --glass-dark: rgba(25, 25, 45, 0.6);
+    --glass-light: rgba(255, 255, 255, 0.7);
+    --glass-dark: rgba(25, 25, 45, 0.75);
     --text-light: #111;
     --text-dark: #ffffff;
     --accent: #6c63ff;
     --danger: #ef4444;
-    --radius: 22px;
+    --radius: 24px;
     --ease: cubic-bezier(.4, 0, .2, 1);
 }
 
-/* ===================================================== RESET & BASE ===================================================== */
+/* ===================================================== 
+   RESET & BASE 
+===================================================== */
 * {
     box-sizing: border-box;
-    font-family: Inter, system-ui, -apple-system;
+    font-family: 'Inter', system-ui, -apple-system;
     -webkit-tap-highlight-color: transparent;
 }
 
 body {
     margin: 0;
-    padding-bottom: 160px;
-    background: radial-gradient(circle at top, #eef1ff, var(--bg-light));
+    padding-bottom: 120px;
+    background: radial-gradient(circle at top right, #eef1ff 0%, var(--bg-light) 100%);
     color: var(--text-light);
-    transition: background 0.35s var(--ease), color 0.35s var(--ease);
-    animation: pageFade 0.4s var(--ease);
+    transition: background 0.4s var(--ease), color 0.4s var(--ease);
+    min-height: 100vh;
 }
 
 body.dark {
-    background: radial-gradient(circle at top, #161a3a, var(--bg-dark));
+    background: radial-gradient(circle at top right, #1a1f3d 0%, var(--bg-dark) 100%);
     color: var(--text-dark);
 }
 
-@keyframes pageFade {
-    from {
-        opacity: 0;
-        transform: translateY(8px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ===================================================== SPLASH SCREEN ===================================================== */
-#splash {
-    position: fixed;
-    inset: 0;
-    background: linear-gradient(135deg, #4f46e5, #6c63ff);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    z-index: 99999;
-}
-
-#splash .logo {
-    font-size: 26px;
-    font-weight: 600;
-    margin-bottom: 22px;
-}
-
-/* .loader {
-    width: 42px;
-    height: 42px;
-    border: 4px solid rgba(255, 255, 255, 0.3);
-    border-top: 4px solid #fff;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-} */
-
-/* ===================================================== TOP BAR ===================================================== */
+/* ===================================================== 
+   TOP BAR (REFINED)
+===================================================== */
 .topbar {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 18px 20px;
+    padding: 30px 24px 10px;
+    max-width: 520px;
+    margin: 0 auto;
 }
 
 .topbar h1 {
-    margin: 0;
-    font-size: 20px;
-}
-
-.top-actions {
-    display: flex;
-    justify-content: flex-end;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--accent), #a29bfe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .top-actions button {
-    background: none;
-    border: none;
-    font-size: 20px;
-    margin-left: 14px;
-    cursor: pointer;
-    color: inherit;
-    transition: transform 0.2s var(--ease), opacity 0.2s;
+    background: var(--glass-light);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-.top-actions button:active {
-    transform: scale(0.9);
+body.dark .top-actions button {
+    background: var(--glass-dark);
 }
 
-/* =====================================================
-   PROGRESS + STREAK (REFINED)
+/* ===================================================== 
+   PROGRESS BAR (MODERN GLOW)
 ===================================================== */
-.progress-wrap {
-    max-width: 520px;
-    margin: auto;
-}
-
-.progress-text {
-    font-size: 13px;          /* slightly smaller */
-    margin-bottom: 4px;       /* tighter spacing */
-    opacity: 0.85;
-}
-
-/* Slimmer progress bar */
 .progress-bar {
-    height: 6px;              /* was 10px */
-    background: rgba(0, 0, 0, 0.12);
-    border-radius: 6px;
-    overflow: hidden;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
 }
 
 body.dark .progress-bar {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .progress-fill {
-    height: 100%;
-    width: 0%;
+    border-radius: 10px;
     background: linear-gradient(90deg, #6c63ff, #8f88ff);
-    transition: width 0.45s var(--ease);
+    box-shadow: 0 0 15px rgba(108, 99, 255, 0.4);
 }
 
-/* Progress animation polish */
-.progress-fill {
-    position: relative;
-    overflow: hidden;
-}
-
-/* Glow effect (triggered by JS) */
-.progress-fill.glow {
-    box-shadow: 0 0 10px rgba(108, 99, 255, 0.6);
-    transition: box-shadow 0.4s ease;
-}
-
-/* Optional shimmer */
-.progress-fill::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        120deg,
-        transparent 30%,
-        rgba(255,255,255,0.35) 50%,
-        transparent 70%
-    );
-    transform: translateX(-100%);
-}
-
-.progress-fill.glow::after {
-    animation: shimmer 0.6s ease;
-}
-
-@keyframes shimmer {
-    to {
-        transform: translateX(100%);
-    }
-}
-
-/* Streak text stays readable but compact */
-.streak-box {
-    font-size: 13px;
-    opacity: 0.9;
-    margin-top: 6px;
-}
-
-/* ===================================================== CONTAINER ===================================================== */
-.container {
-    max-width: 520px;
-    margin: auto;
-    padding: 20px;
-}
-
-/* ===================================================== GLASS CARD (ENHANCED) ===================================================== */
+/* ===================================================== 
+   TASK CARDS (THE ENHANCED LOOK)
+===================================================== */
 .card {
-    position: relative;
     background: var(--glass-light);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
     border-radius: var(--radius);
-    padding: 18px;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(26px) saturate(160%);
-    -webkit-backdrop-filter: blur(26px) saturate(160%);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    transition: transform 0.3s var(--ease), box-shadow 0.3s;
-}
-
-.card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.05));
-    pointer-events: none;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05), inset 0 1px 1px rgba(255,255,255,0.4);
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s var(--ease);
 }
 
 body.dark .card {
     background: var(--glass-dark);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
 }
 
 .card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 32px 60px rgba(0, 0, 0, 0.25);
-}
-
-/* ===================================================== TASK LIST ===================================================== */
-.task {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    transition: transform 0.25s var(--ease), opacity 0.25s;
+    transform: scale(1.02);
+    border-color: var(--accent);
 }
 
 .task-left {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 14px;
 }
 
-.task.done {
-    opacity: 0.55;
-    transform: scale(0.96);
-}
-
-.task button {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    color: inherit;
-    transition: transform 0.2s;f
-}
-
-.task button:active {
-    transform: scale(0.85);
-}
-
-.task input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    accent-color: var(--accent);
-    cursor: pointer;
-}
-
-/* ===================================================== EMPTY STATE ===================================================== */
-.empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    opacity: 0.75;
-    animation: fadeUp 0.4s var(--ease);
-}
-
-.empty-state span {
-    font-size: 42px;
-    display: block;
-    margin-bottom: 10px;
-}
-
-@keyframes fadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* =====================================================
-   TASK CHECKBOX → CIRCLE WITH CHECK ICON
-===================================================== */
-
-.task input[type="checkbox"] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    border: 2px solid rgba(0, 0, 0, 0.25);
-    background: transparent;
-    cursor: pointer;
-    display: grid;
-    place-content: center;
-    transition: 
-        border-color 0.2s ease,
-        background 0.2s ease,
-        transform 0.15s ease;
-}
-
-/* Dark mode border */
-body.dark .task input[type="checkbox"] {
-    border-color: rgba(255, 255, 255, 0.35);
-}
-
-/* Check icon */
-.task input[type="checkbox"]::before {
-    content: "✓";
-    font-size: 13px;
-    font-weight: 700;
-    color: #fff;
-    transform: scale(0);
-    transition: transform 0.2s ease;
-    line-height: 1;
-}
-
-/* Checked state */
-.task input[type="checkbox"]:checked {
-    background: linear-gradient(135deg, #4f46e5, #6c63ff);
-    border-color: transparent;
-}
-
-/* Show check icon */
-.task input[type="checkbox"]:checked::before {
-    transform: scale(1);
-}
-
-/* Press feedback */
-.task input[type="checkbox"]:active {
-    transform: scale(0.9);
-}
-
-.task input[type="checkbox"]:checked {
-    animation: checkPop 0.2s ease;
-}
-
-@keyframes checkPop {
-    0% { transform: scale(0.9); }
-    60% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
-
-/* =====================================================
-   TASK CHECKBOX → CIRCULAR RADIO STYLE
-===================================================== */
-
-.task input[type="checkbox"] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    border: 2px solid rgba(0, 0, 0, 0.25);
-    background: transparent;
-    cursor: pointer;
-    display: grid;
-    place-content: center;
-    transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
-}
-
-/* Dark mode border */
-body.dark .task input[type="checkbox"] {
-    border-color: rgba(255, 255, 255, 0.35);
-}
-
-/* Inner dot */
-.task input[type="checkbox"]::before {
-    content: "";
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #fff;
-    transform: scale(0);
-    transition: transform 0.2s ease;
-}
-
-/* Checked state */
-.task input[type="checkbox"]:checked {
-    background: linear-gradient(135deg, #4f46e5, #6c63ff);
-    border-color: transparent;
-}
-
-/* Show inner dot when checked */
-.task input[type="checkbox"]:checked::before {
-    transform: scale(1);
-}
-
-/* Press feedback */
-.task input[type="checkbox"]:active {
-    transform: scale(0.9);
-}
-
-.task.done {
-    opacity: 0.55;
-    transform: scale(0.97);
-}
-
-/* =====================================================
-   TASK CHECKBOX → CIRCLE WITH CHECK ICON (FIXED)
-===================================================== */
-
-.task input[type="checkbox"] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    border: 2px solid rgba(0, 0, 0, 0.25);
-    background: transparent;
-    cursor: pointer;
-    position: relative;
-    transition: 
-        border-color 0.2s ease,
-        background 0.2s ease,
-        transform 0.15s ease;
-}
-
-/* Dark mode border */
-body.dark .task input[type="checkbox"] {
-    border-color: rgba(255, 255, 255, 0.35);
-}
-
-/* Checked background */
-.task input[type="checkbox"]:checked {
-    background: linear-gradient(135deg, #4f46e5, #6c63ff);
-    border-color: transparent;
-}
-
-/* Check icon using mask (100% reliable) */
-.task input[type="checkbox"]:checked::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: #fff;
-
-    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M9.55 17.27L4.78 12.5l1.41-1.41l3.36 3.36l8.26-8.26l1.41 1.41z'/%3E%3C/svg%3E");
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    -webkit-mask-size: 14px;
-
-    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M9.55 17.27L4.78 12.5l1.41-1.41l3.36 3.36l8.26-8.26l1.41 1.41z'/%3E%3C/svg%3E");
-    mask-repeat: no-repeat;
-    mask-position: center;
-    mask-size: 14px;
-}
-
-/* Press feedback */
-.task input[type="checkbox"]:active {
-    transform: scale(0.9);
-}
-
-/* ===================================================== REMINDER POPUP ===================================================== */
-.reminder-popup {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.85);
-    color: #fff;
-    padding: 16px;
-    border-radius: 18px;
-    text-align: center;
-    z-index: 9999;
-    width: 280px;
-    animation: fadeUp 0.35s var(--ease);
-}
-
-/* ===================================================== ADD TASK MODAL (GLASS BOTTOM SHEET) ===================================================== */
-.modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.45);
-    display: flex;
-    align-items: flex-end;
-    z-index: 9999;
-    transition: opacity 0.25s ease;
-}
-
-.modal.hidden {
-    opacity: 0;
-    pointer-events: none;
-}
-
-.modal-sheet {
-    width: 100%;
-    max-width: 420px;
-    margin: auto;
-    background: var(--glass-light);
-    backdrop-filter: blur(30px) saturate(160%);
-    -webkit-backdrop-filter: blur(30px) saturate(160%);
-    border-radius: 28px 28px 0 0;
-    padding: 22px;
-    border-top: 1px solid rgba(255, 255, 255, 0.35);
-    animation: slideUp 0.3s var(--ease);
-}
-
-body.dark .modal-sheet {
-    background: var(--glass-dark);
-}
-
-@keyframes slideUp {
-    from {
-        transform: translateY(100%);
-    }
-
-    to {
-        transform: translateY(0);
-    }
-}
-
-/* ===================================================== BOTTOM NAVIGATION (GLASS) ===================================================== */
-.bottom-nav {
-    position: fixed;
-    bottom: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - 32px);
-    max-width: 420px;
-    background: var(--glass-light);
-    backdrop-filter: blur(28px) saturate(160%);
-    -webkit-backdrop-filter: blur(28px) saturate(160%);
-    border-radius: 28px;
-    padding: 12px 18px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.22);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    z-index: 10000;
-}
-
-body.dark .bottom-nav {
-    background: var(--glass-dark);
-}
-
-.nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: 12px;
-    text-decoration: none;
-    color: inherit;
-    opacity: 0.65;
-    transition: opacity 0.2s, transform 0.2s;
-}
-
-.nav-item.active {
-    opacity: 1;
-    color: var(--accent);
-    transform: translateY(-2px);
-}
-
-.nav-item span {
-    font-size: 20px;
-}
-
-.nav-add {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #4f46e5, #6d5dfc);
-    border-radius: 50%;
-    border: none;
-    color: #fff;
-    font-size: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: translateY(-28px);
-    box-shadow: 0 16px 34px rgba(79, 70, 229, 0.6);
-    cursor: pointer;
-    transition: transform 0.2s var(--ease);
-    position: relative;
-    z-index: 10001;
-    pointer-events: auto;
-    touch-action: manipulation;
-}
-
-.nav-add:active {
-    transform: translateY(-28px) scale(0.9);
-}
-
-/* =====================================================
-   MODAL CONTENT STYLING (FINAL FIXED)
-===================================================== */
-
-/* Modal title */
-.modal-sheet h3 {
-    margin: 0 0 16px;
-    font-size: 18px;
+.task-info h4 {
+    margin: 0;
+    font-size: 16px;
     font-weight: 600;
 }
 
-/* Inputs */
-.modal-sheet input[type="text"],
-.modal-sheet input[type="time"] {
-    width: 100%;
-    padding: 12px 14px;
-    margin-bottom: 12px;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    background: rgba(255, 255, 255, 0.65);
-    color: #111;
-    font-size: 14px;
-    outline: none;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+.task-info small {
+    display: block;
+    font-size: 12px;
+    opacity: 0.6;
+    margin-top: 2px;
 }
 
-/* Dark mode inputs */
-body.dark .modal-sheet input[type="text"],
-body.dark .modal-sheet input[type="time"] {
-    background: rgba(30, 30, 50, 0.6);
-    border-color: rgba(255, 255, 255, 0.15);
-    color: #fff;
-}
-
-/* Input focus */
-.modal-sheet input:focus {
-    border-color: var(--accent);
-}
-
-/* Buttons */
-.modal-sheet button {
-    width: 100%;
-    padding: 12px;
-    border-radius: 16px;
-    border: none;
-    font-size: 14px;
+/* ===================================================== 
+   CHECKBOX (SQUIRCLE STYLE)
+===================================================== */
+.task input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 8px; /* Squircle style */
+    border: 2px solid rgba(108, 99, 255, 0.3);
+    background: transparent;
     cursor: pointer;
-    transition: transform 0.15s ease, opacity 0.15s ease;
+    position: relative;
+    transition: all 0.2s ease;
 }
 
-/* Primary button */
+.task input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 4px 10px rgba(108, 99, 255, 0.4);
+}
+
+.task input[type="checkbox"]::after {
+    content: "\eb7b"; /* Remix Checkmark */
+    font-family: 'remixicon';
+    position: absolute;
+    color: white;
+    font-size: 16px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.task input[type="checkbox"]:checked::after {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* ===================================================== 
+   BOTTOM NAV & FAB
+===================================================== */
+.bottom-nav {
+    bottom: 24px;
+    width: calc(100% - 48px);
+    max-width: 480px;
+    padding: 12px 24px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.nav-add {
+    width: 64px;
+    height: 64px;
+    transform: translateY(-32px);
+    background: linear-gradient(135deg, var(--accent), #4f46e5);
+    box-shadow: 0 12px 24px rgba(108, 99, 255, 0.4);
+}
+
+.nav-add:hover {
+    transform: translateY(-35px) scale(1.05);
+}
+
+/* ===================================================== 
+   MODAL (REFINED BOTTOM SHEET)
+===================================================== */
+.modal-sheet {
+    border-radius: 32px 32px 0 0;
+    padding: 30px 24px 40px;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+}
+
+.modal-sheet input {
+    border: 1px solid rgba(0,0,0,0.05) !important;
+    background: rgba(255,255,255,0.8) !important;
+    padding: 16px !important;
+    margin-bottom: 16px !important;
+}
+
+body.dark .modal-sheet input {
+    background: rgba(0,0,0,0.2) !important;
+    border-color: rgba(255,255,255,0.1) !important;
+}
+
 #modalAddBtn {
-    background: linear-gradient(135deg, #4f46e5, #6c63ff);
-    color: #fff;
-    margin-bottom: 10px;
+    padding: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    box-shadow: 0 8px 20px rgba(108, 99, 255, 0.3);
 }
 
-/* Cancel button */
-.close-modal {
-    background: rgba(0, 0, 0, 0.08);
-    color: inherit;
+/* ===================================================== 
+   ANIMATIONS
+===================================================== */
+@keyframes checkPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
 }
 
-body.dark .close-modal {
-    background: rgba(255, 255, 255, 0.12);
-}
-
-/* Button press effect */
-.modal-sheet button:active {
-    transform: scale(0.96);
-}
-
-/* Small screens */
-@media (max-width: 360px) {
-    .modal-sheet h3 {
-        font-size: 16px;
-    }
-}
-
-/* ===================================================== FALLBACK (ANDROID SAFE) ===================================================== */
-@supports not (backdrop-filter: blur(10px)) {
-
-    .card,
-    .modal-sheet,
-    .bottom-nav {
-        background: rgba(255, 255, 255, 0.95);
-    }
-
-    body.dark .card,
-    body.dark .modal-sheet,
-    body.dark .bottom-nav {
-        background: rgba(30, 30, 50, 0.95);
-    }
-}
-
-/* ===================================================== RESPONSIVE ===================================================== */
-@media (max-width: 360px) {
-    .container {
-        padding: 16px;
-    }
-}
-
-.task small {
-    color: rgba(0, 0, 0, 0.65);
-}
-
-body.dark .task small {
-    color: rgba(255, 255, 255, 0.65);
-}
-
-.bottom-nav small {
-    color: rgba(0, 0, 0, 0.7);
-}
-
-body.dark .bottom-nav small {
-    color: rgba(255, 255, 255, 0.7);
+.task.done {
+    opacity: 0.6;
+    filter: grayscale(0.5);
 }
