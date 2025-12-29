@@ -410,6 +410,60 @@ body.dark .task input[type="checkbox"] {
     transform: scale(0.97);
 }
 
+/* =====================================================
+   TASK CHECKBOX → CIRCLE WITH CHECK ICON (FIXED)
+===================================================== */
+
+.task input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 0, 0, 0.25);
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    transition: 
+        border-color 0.2s ease,
+        background 0.2s ease,
+        transform 0.15s ease;
+}
+
+/* Dark mode border */
+body.dark .task input[type="checkbox"] {
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Checked background */
+.task input[type="checkbox"]:checked {
+    background: linear-gradient(135deg, #4f46e5, #6c63ff);
+    border-color: transparent;
+}
+
+/* Check icon using mask (100% reliable) */
+.task input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #fff;
+
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M9.55 17.27L4.78 12.5l1.41-1.41l3.36 3.36l8.26-8.26l1.41 1.41z'/%3E%3C/svg%3E");
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: 14px;
+
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M9.55 17.27L4.78 12.5l1.41-1.41l3.36 3.36l8.26-8.26l1.41 1.41z'/%3E%3C/svg%3E");
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: 14px;
+}
+
+/* Press feedback */
+.task input[type="checkbox"]:active {
+    transform: scale(0.9);
+}
+
 /* ===================================================== REMINDER POPUP ===================================================== */
 .reminder-popup {
     position: fixed;
