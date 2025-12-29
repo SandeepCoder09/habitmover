@@ -1,3 +1,6 @@
+/* =====================================================
+   ROOT VARIABLES (HABIT MOVER)
+===================================================== */
 :root {
   --bg-light: #f4f6fb;
   --bg-dark: #0f1220;
@@ -9,17 +12,20 @@
   --text-dark: #ffffff;
 
   --accent: #6c63ff;
+  --danger: #ef4444;
 }
 
-/* Reset */
+/* =====================================================
+   RESET & BASE
+===================================================== */
 * {
   box-sizing: border-box;
   font-family: Inter, system-ui, -apple-system;
 }
 
 body {
-  padding-bottom: 120px;
   margin: 0;
+  padding-bottom: 140px;
   background: var(--bg-light);
   color: var(--text-light);
   transition: background 0.3s, color 0.3s;
@@ -30,7 +36,9 @@ body.dark {
   color: var(--text-dark);
 }
 
-/* Top Bar */
+/* =====================================================
+   SPLASH SCREEN
+===================================================== */
 #splash {
   position: fixed;
   inset: 0;
@@ -39,7 +47,7 @@ body.dark {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: #fff;
   z-index: 99999;
 }
 
@@ -53,7 +61,7 @@ body.dark {
   width: 40px;
   height: 40px;
   border: 4px solid rgba(255,255,255,0.3);
-  border-top: 4px solid white;
+  border-top: 4px solid #fff;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -62,16 +70,24 @@ body.dark {
   to { transform: rotate(360deg); }
 }
 
+/* =====================================================
+   TOP BAR
+===================================================== */
 .topbar {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 10px;
   padding: 16px 20px;
 }
 
 .topbar h1 {
   margin: 0;
   font-size: 20px;
+}
+
+.top-actions {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .top-actions button {
@@ -83,70 +99,76 @@ body.dark {
   color: inherit;
 }
 
-/* Container */
-.container {
-  padding: 20px;
+/* =====================================================
+   PROGRESS + STREAK
+===================================================== */
+.progress-wrap {
   max-width: 520px;
   margin: auto;
 }
 
-/* Card (Glass) */
+.progress-text {
+  font-size: 14px;
+  margin-bottom: 6px;
+  opacity: 0.85;
+}
+
+.progress-bar {
+  height: 10px;
+  background: rgba(0,0,0,0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+body.dark .progress-bar {
+  background: rgba(255,255,255,0.15);
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #6c63ff, #8f88ff);
+  transition: width 0.4s ease;
+}
+
+.streak-box {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* =====================================================
+   CONTAINER
+===================================================== */
+.container {
+  max-width: 520px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* =====================================================
+   CARD (GLASS)
+===================================================== */
 .card {
   background: var(--card-light);
   border-radius: 18px;
   padding: 16px;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-
+  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
   backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
 }
 
 body.dark .card {
   background: var(--card-dark);
 }
 
-/* Fallback if blur unsupported */
-@supports not (backdrop-filter: blur(10px)) {
-  .card {
-    background: rgba(255, 255, 255, 0.85);
-  }
-
-  body.dark .card {
-    background: rgba(25, 25, 45, 0.9);
-  }
-}
-
-/* Add Task */
-.add-task {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.add-task input,
-.add-task button {
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  outline: none;
-}
-
-.add-task input {
-  flex: 1;
-}
-
-.add-task button {
-  background: var(--accent);
-  color: #fff;
-  cursor: pointer;
-}
-
-/* Task Item */
+/* =====================================================
+   TASK LIST
+===================================================== */
 .task {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  transition: transform 0.25s ease, opacity 0.25s ease;
 }
 
 .task-left {
@@ -157,101 +179,59 @@ body.dark .card {
 
 .task.done {
   opacity: 0.6;
-  text-decoration: line-through;
+  transform: scale(0.98);
 }
 
 .task button {
   background: none;
   border: none;
-  cursor: pointer;
   font-size: 18px;
+  cursor: pointer;
   color: inherit;
 }
 
-/* Reminder Popup */
-.reminder-popup {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.75);
-  color: #fff;
-  padding: 14px 18px;
-  border-radius: 14px;
+/* Checkbox */
+.task input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* =====================================================
+   EMPTY STATE
+===================================================== */
+.empty-state {
   text-align: center;
-  z-index: 9999;
-  animation: fadeInUp 0.4s ease;
+  padding: 40px 20px;
+  opacity: 0.75;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
+.empty-state span {
+  font-size: 42px;
+  display: block;
+  margin-bottom: 10px;
 }
 
-/* ================= Progress Bar ================= */
-.progress-wrap {
-  padding: 0 20px 10px;
-  max-width: 520px;
-  margin: auto;
-}
-
-.progress-text {
-  font-size: 14px;
-  margin-bottom: 6px;
-  opacity: 0.8;
-}
-
-.progress-bar {
-  height: 10px;
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-body.dark .progress-bar {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.progress-fill {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, #6c63ff, #8f88ff);
-  border-radius: 10px;
-  transition: width 0.4s ease;
-}
-
-/* ================= Streak ================= */
-.streak-box {
-  margin: 10px 20px 0;
-  font-size: 14px;
-  opacity: 0.9;
-}
-
-/* ================= Reminder Popup ================= */
+/* =====================================================
+   REMINDER POPUP
+===================================================== */
 .reminder-popup {
   position: fixed;
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0,0,0,0.85);
   color: #fff;
   padding: 16px;
   border-radius: 16px;
   text-align: center;
   z-index: 9999;
   width: 280px;
-  animation: fadeUp 0.3s ease;
 }
 
 .reminder-popup button {
-  margin: 6px 4px 0;
+  margin-top: 8px;
   padding: 6px 10px;
   border-radius: 8px;
   border: none;
@@ -269,199 +249,72 @@ body.dark .progress-bar {
   color: #fff;
 }
 
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-}
-
-/* ================= Task Completion Animation ================= */
-
-.task {
-  transition: transform 0.25s ease, opacity 0.25s ease, background 0.25s ease;
-}
-
-.task.done {
-  opacity: 0.65;
-  transform: scale(0.98);
-}
-
-/* Animated line-through */
-.task.done strong {
-  position: relative;
-}
-
-.task.done strong::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 100%;
-  height: 2px;
-  background: currentColor;
-  animation: strike 0.3s ease forwards;
-}
-
-@keyframes strike {
-  from {
-    width: 0;
-  }
-
-  to {
-    width: 100%;
-  }
-}
-
-/* Checkbox animation */
-.task input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: #6c63ff;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.task input[type="checkbox"]:checked {
-  transform: scale(1.2);
-}
-
-/* ================= Empty State ================= */
-
-.empty-state {
-  text-align: center;
-  padding: 40px 20px;
-  opacity: 0.7;
-}
-
-.empty-state span {
-  font-size: 42px;
-  display: block;
-  margin-bottom: 10px;
-}
-
-.empty-state h3 {
-  margin: 0;
-  font-size: 18px;
-}
-
-.empty-state p {
-  margin-top: 6px;
-  font-size: 14px;
-}
-
 /* =====================================================
-   MOBILE-FIRST POLISH
+   ADD TASK MODAL (BOTTOM SHEET)
 ===================================================== */
-
-@media (max-width: 600px) {
-
-  /* Topbar */
-  .topbar {
-    padding: 14px 16px;
-  }
-
-  .topbar h1 {
-    font-size: 18px;
-  }
-
-  .top-actions button {
-    font-size: 22px;
-  }
-
-  /* Container */
-  .container {
-    padding: 16px;
-  }
-
-  /* Add Task Card */
-  .add-task {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .add-task input,
-  .add-task button {
-    width: 100%;
-    font-size: 15px;
-    padding: 12px;
-  }
-
-  /* Progress + Streak */
-  .progress-wrap {
-    padding: 0 16px 8px;
-  }
-
-  .streak-box {
-    margin: 8px 16px 0;
-    font-size: 13px;
-  }
-
-  /* Task Cards */
-  .task {
-    padding: 14px;
-  }
-
-  .task-left {
-    gap: 12px;
-  }
-
-  .task strong {
-    font-size: 15px;
-  }
-
-  .task small {
-    font-size: 13px;
-  }
-
-  .task button {
-    font-size: 20px;
-  }
-
-  /* Empty State */
-  .empty-state {
-    padding: 30px 16px;
-  }
-
-  .empty-state span {
-    font-size: 36px;
-  }
-
-  .empty-state h3 {
-    font-size: 16px;
-  }
-
-  /* Reminder Popup */
-  .reminder-popup {
-    width: calc(100% - 32px);
-    bottom: 16px;
-  }
-
-  .reminder-popup button {
-    width: 100%;
-    margin-top: 6px;
-  }
-  
-#installBtn {
+.modal {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 12px 18px;
-  font-size: 14px;
-  border-radius: 10px;
-  border: none;
-  background: #4f46e5;
-  color: #fff;
-  cursor: pointer;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: flex-end;
   z-index: 9999;
 }
 
+.modal.hidden {
+  display: none;
+}
+
+.modal-sheet {
+  width: 100%;
+  max-width: 420px;
+  margin: auto;
+  background: var(--card-light);
+  backdrop-filter: blur(20px);
+  border-radius: 24px 24px 0 0;
+  padding: 20px;
+  animation: slideUp 0.25s ease;
+}
+
+body.dark .modal-sheet {
+  background: var(--card-dark);
+}
+
+.modal-sheet input {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  border: none;
+}
+
+.modal-sheet button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  font-size: 15px;
+  margin-top: 8px;
+}
+
+#modalAddBtn {
+  background: var(--accent);
+  color: #fff;
+}
+
+.close-modal {
+  background: transparent;
+  color: inherit;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* =====================================================
+   BOTTOM NAVIGATION
+===================================================== */
 .bottom-nav {
   position: fixed;
   bottom: 16px;
@@ -469,7 +322,8 @@ body.dark .progress-bar {
   transform: translateX(-50%);
   width: calc(100% - 32px);
   max-width: 420px;
-  background: var(--card);
+  background: var(--card-light);
+  backdrop-filter: blur(18px);
   border-radius: 24px;
   padding: 10px 14px;
   display: flex;
@@ -484,17 +338,18 @@ body.dark .progress-bar {
   flex-direction: column;
   align-items: center;
   font-size: 12px;
-  color: var(--muted);
   text-decoration: none;
+  color: inherit;
+  opacity: 0.7;
+}
+
+.nav-item.active {
+  opacity: 1;
+  color: var(--accent);
 }
 
 .nav-item span {
   font-size: 20px;
-  margin-bottom: 2px;
-}
-
-.nav-item.active {
-  color: var(--primary);
 }
 
 .nav-add {
