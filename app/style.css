@@ -30,6 +30,37 @@ body.dark {
 }
 
 /* Top Bar */
+#splash {
+  position: fixed;
+  inset: 0;
+  background: #4f46e5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  z-index: 99999;
+}
+
+#splash .logo {
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.loader {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255,255,255,0.3);
+  border-top: 4px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 .topbar {
   display: flex;
   justify-content: space-between;
