@@ -15,18 +15,19 @@ const loginBtn = document.getElementById("loginBtn");
 const rememberMe = document.getElementById("rememberMe");
 const msg = document.getElementById("msg");
 const themeToggle = document.getElementById("themeToggle");
-
 const togglePass = document.getElementById("togglePass");
 const loginCard = document.querySelector(".login-card");
 
 /* =====================================================
    AUTO LOGIN (REMEMBER ME)
 ===================================================== */
-const remembered = JSON.parse(localStorage.getItem(REMEMBER_KEY));
-if (remembered && remembered.loggedIn) {
-  localStorage.setItem(AUTH_KEY, JSON.stringify(remembered));
-  window.location.href = "../app/index.html";
-}
+try {
+  const remembered = JSON.parse(localStorage.getItem(REMEMBER_KEY));
+  if (remembered?.loggedIn) {
+    localStorage.setItem(AUTH_KEY, JSON.stringify(remembered));
+    window.location.href = "../app/index.html";
+  }
+} catch {}
 
 /* =====================================================
    THEME
@@ -37,8 +38,7 @@ if (localStorage.getItem(THEME_KEY) === "dark") {
 }
 
 themeToggle.onclick = () => {
-  document.body.classList.toggle("dark");
-  const isDark = document.body.classList.contains("dark");
+  const isDark = document.body.classList.toggle("dark");
   localStorage.setItem(THEME_KEY, isDark ? "dark" : "light");
   themeToggle.innerHTML = isDark
     ? `<span class="ri-sun-line"></span>`
@@ -46,13 +46,13 @@ themeToggle.onclick = () => {
 };
 
 /* =====================================================
-   PASSWORD SHOW / HIDE
+   PASSWORD TOGGLE
 ===================================================== */
 if (togglePass) {
   togglePass.onclick = () => {
-    const hidden = passEl.type === "password";
-    passEl.type = hidden ? "text" : "password";
-    togglePass.className = hidden
+    const show = passEl.type === "password";
+    passEl.type = show ? "text" : "password";
+    togglePass.className = show
       ? "toggle-pass ri-eye-off-line"
       : "toggle-pass ri-eye-line";
   };
@@ -63,27 +63,29 @@ if (togglePass) {
 ===================================================== */
 function showError(text) {
   msg.textContent = text;
+  msg.style.color = "#ef4444";
   loginCard.classList.add("shake");
   setTimeout(() => loginCard.classList.remove("shake"), 400);
 }
 
+function showSuccess(text) {
+  msg.textContent = text;
+  msg.style.color = "#22c55e";
+}
+
 function setLoading(state) {
-  if (state) {
-    loginBtn.classList.add("loading");
-    loginBtn.disabled = true;
-  } else {
-    loginBtn.classList.remove("loading");
-    loginBtn.disabled = false;
-  }
+  loginBtn.disabled = state;
+  loginBtn.classList.toggle("loading", state);
 }
 
 /* =====================================================
    LOGIN
 ===================================================== */
 loginBtn.onclick = () => {
+  if (loginBtn.disabled) return;
+
   const email = emailEl.value.trim();
   const password = passEl.value.trim();
-
   msg.textContent = "";
 
   if (!email || !password) {
@@ -95,6 +97,7 @@ loginBtn.onclick = () => {
 
   setTimeout(() => {
     const users = JSON.parse(localStorage.getItem(USERS_KEY)) || [];
+
     const user = users.find(
       u => u.email === email && u.password === password
     );
@@ -121,10 +124,10 @@ loginBtn.onclick = () => {
       localStorage.removeItem(REMEMBER_KEY);
     }
 
-    msg.textContent = "Login successful ✔";
+    showSuccess("Login successful ✔");
 
     setTimeout(() => {
       window.location.href = "../app/index.html";
     }, 500);
-  }, 700); // fake delay for spinner UX
+  }, 650); // smooth fake delay
 };
