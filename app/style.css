@@ -381,6 +381,87 @@ body.dark .bottom-nav {
     transform: translateY(-28px) scale(0.9);
 }
 
+/* =====================================================
+   MODAL CONTENT STYLING (FINAL)
+===================================================== */
+
+/* Modal title */
+.modal-sheet h3 {
+    margin: 0 0 16px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* Inputs */
+.modal-sheet input[type="text"],
+.modal-sheet input[type="time"] {
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.6);
+    color: #111;
+    font-size: 14px;
+    outline: none;
+    backdrop-filter: blur(10px);
+}
+
+body.dark .modal-sheet input {
+    background: rgba(30,30,50,0.6);
+    border-color: rgba(255,255,255,0.15);
+    color: #fff;
+}
+
+/* Input focus */
+.modal-sheet input:focus {
+    border-color: var(--accent);
+}
+
+/* Buttons container (auto spacing) */
+.modal-sheet button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 14px;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+/* Primary button */
+#modalAddBtn {
+    background: linear-gradient(135deg, #4f46e5, #6c63ff);
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+/* Cancel button */
+.close-modal {
+    background: rgba(0,0,0,0.08);
+    color: inherit;
+}
+
+body.dark .close-modal {
+    background: rgba(255,255,255,0.12);
+}
+
+/* Button press effect */
+.modal-sheet button:active {
+    transform: scale(0.96);
+}
+
+/* Small screens */
+@media (max-width: 360px) {
+    .modal-sheet {
+        padding: 18px;
+    }
+
+    .modal-sheet h3 {
+        font-size: 16px;
+    }
+}
+
 /* ===================================================== FALLBACK (ANDROID SAFE) ===================================================== */
 @supports not (backdrop-filter: blur(10px)) {
 
