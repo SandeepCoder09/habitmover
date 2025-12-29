@@ -194,3 +194,42 @@ button#loginBtn:active {
     padding: 28px 22px;
   }
 }
+
+.password-wrap {
+  position: relative;
+}
+
+.toggle-pass {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.toggle-pass:active {
+  opacity: 1;
+}
+
+button.loading {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+button.loading::after {
+  content: "";
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(255,255,255,0.4);
+  border-top: 3px solid #fff;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 10px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
