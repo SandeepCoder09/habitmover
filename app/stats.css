@@ -1,93 +1,63 @@
-:root {
-    --bg-light: #f4f6fb;
-    --bg-dark: #0f1220;
-    --card-light: rgba(255,255,255,0.6);
-    --card-dark: rgba(25,25,45,0.6);
-    --text-light: #111;
-    --text-dark: #fff;
-    --accent: #6c63ff;
-  }
-  
-  /* Reset */
-  * {
-    box-sizing: border-box;
-    font-family: Inter, system-ui, -apple-system;
-  }
-  
-  body {
-    margin: 0;
-    background: var(--bg-light);
-    color: var(--text-light);
-  }
-  
-  body.dark {
-    background: var(--bg-dark);
-    color: var(--text-dark);
-  }
-  
-  /* Topbar */
-  .topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px;
-  }
-  
-  .topbar h1 {
-    margin: 0;
-    font-size: 18px;
-  }
-  
-  .topbar button {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: inherit;
-  }
-  
-  /* Container */
-  .container {
-    padding: 20px;
-    max-width: 520px;
-    margin: auto;
-  }
-  
-  /* Card */
-  .stat-card {
-    background: var(--card-light);
-    border-radius: 16px;
-    padding: 16px;
-    margin-bottom: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-  }
-  
-  body.dark .stat-card {
-    background: var(--card-dark);
-  }
-  
-  .stat-date {
-    font-size: 14px;
-    opacity: 0.7;
-    margin-bottom: 6px;
-  }
-  
-  .stat-bar {
-    height: 10px;
-    background: rgba(0,0,0,0.1);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  
-  body.dark .stat-bar {
-    background: rgba(255,255,255,0.15);
-  }
-  
-  .stat-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #6c63ff, #8f88ff);
-    width: 0%;
-  }
-  
+/* ================= STATS GRID ================= */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat .label {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.stat strong {
+  display: block;
+  font-size: 22px;
+  margin-top: 6px;
+}
+
+/* ================= WEEK BARS ================= */
+.week-bars {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 140px;
+  margin-top: 20px;
+}
+
+.day-bar {
+  text-align: center;
+  width: 12%;
+}
+
+.day-bar .bar {
+  height: 100px;
+  background: rgba(0,0,0,0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+body.dark .day-bar .bar {
+  background: rgba(255,255,255,0.15);
+}
+
+.day-bar .fill {
+  width: 100%;
+  background: linear-gradient(180deg, #6c63ff, #8f88ff);
+  border-radius: 10px;
+  transition: height 0.3s ease;
+}
+
+.day-bar small {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-top: 6px;
+  display: block;
+}
