@@ -2,368 +2,434 @@
    ROOT VARIABLES (HABIT MOVER)
 ===================================================== */
 :root {
-  --bg-light: #f4f6fb;
-  --bg-dark: #0f1220;
+    --bg-light: #f4f6fb;
+    --bg-dark: #0f1220;
 
-  --card-light: rgba(255, 255, 255, 0.6);
-  --card-dark: rgba(25, 25, 45, 0.6);
+    --glass-light: rgba(255, 255, 255, 0.55);
+    --glass-dark: rgba(25, 25, 45, 0.6);
 
-  --text-light: #111;
-  --text-dark: #ffffff;
+    --text-light: #111;
+    --text-dark: #ffffff;
 
-  --accent: #6c63ff;
-  --danger: #ef4444;
+    --accent: #6c63ff;
+    --danger: #ef4444;
+
+    --radius: 22px;
+    --ease: cubic-bezier(.4, 0, .2, 1);
 }
 
 /* =====================================================
-   RESET & BASE
-===================================================== */
+     RESET & BASE
+  ===================================================== */
 * {
-  box-sizing: border-box;
-  font-family: Inter, system-ui, -apple-system;
+    box-sizing: border-box;
+    font-family: Inter, system-ui, -apple-system;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  margin: 0;
-  padding-bottom: 140px;
-  background: var(--bg-light);
-  color: var(--text-light);
-  transition: background 0.3s, color 0.3s;
+    margin: 0;
+    padding-bottom: 160px;
+    background: radial-gradient(circle at top, #eef1ff, var(--bg-light));
+    color: var(--text-light);
+    transition: background 0.35s var(--ease), color 0.35s var(--ease);
+    animation: pageFade 0.4s var(--ease);
 }
 
 body.dark {
-  background: var(--bg-dark);
-  color: var(--text-dark);
+    background: radial-gradient(circle at top, #161a3a, var(--bg-dark));
+    color: var(--text-dark);
+}
+
+@keyframes pageFade {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* =====================================================
-   SPLASH SCREEN
-===================================================== */
+     SPLASH SCREEN
+  ===================================================== */
 #splash {
-  position: fixed;
-  inset: 0;
-  background: #4f46e5;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  z-index: 99999;
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #4f46e5, #6c63ff);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    z-index: 99999;
 }
 
 #splash .logo {
-  font-size: 26px;
-  font-weight: 600;
-  margin-bottom: 20px;
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 22px;
 }
 
 .loader {
-  width: 40px;
-  height: 40px;
-  border: 4px solid rgba(255,255,255,0.3);
-  border-top: 4px solid #fff;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+    width: 42px;
+    height: 42px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* =====================================================
-   TOP BAR
-===================================================== */
+     TOP BAR
+  ===================================================== */
 .topbar {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 18px 20px;
 }
 
 .topbar h1 {
-  margin: 0;
-  font-size: 20px;
+    margin: 0;
+    font-size: 20px;
 }
 
 .top-actions {
-  display: flex;
-  justify-content: flex-end;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .top-actions button {
-  background: none;
-  border: none;
-  font-size: 20px;
-  margin-left: 12px;
-  cursor: pointer;
-  color: inherit;
+    background: none;
+    border: none;
+    font-size: 20px;
+    margin-left: 14px;
+    cursor: pointer;
+    color: inherit;
+    transition: transform 0.2s var(--ease), opacity 0.2s;
+}
+
+.top-actions button:active {
+    transform: scale(0.9);
 }
 
 /* =====================================================
-   PROGRESS + STREAK
-===================================================== */
+     PROGRESS + STREAK
+  ===================================================== */
 .progress-wrap {
-  max-width: 520px;
-  margin: auto;
+    max-width: 520px;
+    margin: auto;
 }
 
 .progress-text {
-  font-size: 14px;
-  margin-bottom: 6px;
-  opacity: 0.85;
+    font-size: 14px;
+    margin-bottom: 6px;
+    opacity: 0.85;
 }
 
 .progress-bar {
-  height: 10px;
-  background: rgba(0,0,0,0.1);
-  border-radius: 10px;
-  overflow: hidden;
+    height: 10px;
+    background: rgba(0, 0, 0, 0.12);
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 body.dark .progress-bar {
-  background: rgba(255,255,255,0.15);
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .progress-fill {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, #6c63ff, #8f88ff);
-  transition: width 0.4s ease;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #6c63ff, #8f88ff);
+    transition: width 0.5s var(--ease);
 }
 
 .streak-box {
-  font-size: 14px;
-  opacity: 0.9;
+    font-size: 14px;
+    opacity: 0.9;
 }
 
 /* =====================================================
-   CONTAINER
-===================================================== */
+     CONTAINER
+  ===================================================== */
 .container {
-  max-width: 520px;
-  margin: auto;
-  padding: 20px;
+    max-width: 520px;
+    margin: auto;
+    padding: 20px;
 }
 
 /* =====================================================
-   CARD (GLASS)
-===================================================== */
+     GLASS CARD (ENHANCED)
+  ===================================================== */
 .card {
-  background: var(--card-light);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-  backdrop-filter: blur(18px);
+    position: relative;
+    background: var(--glass-light);
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow:
+        0 25px 50px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(26px) saturate(160%);
+    -webkit-backdrop-filter: blur(26px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: transform 0.3s var(--ease), box-shadow 0.3s;
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(180deg,
+            rgba(255, 255, 255, 0.35),
+            rgba(255, 255, 255, 0.05));
+    pointer-events: none;
 }
 
 body.dark .card {
-  background: var(--card-dark);
+    background: var(--glass-dark);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 32px 60px rgba(0, 0, 0, 0.25);
 }
 
 /* =====================================================
-   TASK LIST
-===================================================== */
+     TASK LIST
+  ===================================================== */
 .task {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-  transition: transform 0.25s ease, opacity 0.25s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    transition: transform 0.25s var(--ease), opacity 0.25s;
 }
 
 .task-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .task.done {
-  opacity: 0.6;
-  transform: scale(0.98);
+    opacity: 0.55;
+    transform: scale(0.96);
 }
 
 .task button {
-  background: none;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  color: inherit;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: inherit;
+    transition: transform 0.2s;
 }
 
-/* Checkbox */
+.task button:active {
+    transform: scale(0.85);
+}
+
 .task input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--accent);
-  cursor: pointer;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent);
+    cursor: pointer;
 }
 
 /* =====================================================
-   EMPTY STATE
-===================================================== */
+     EMPTY STATE
+  ===================================================== */
 .empty-state {
-  text-align: center;
-  padding: 40px 20px;
-  opacity: 0.75;
+    text-align: center;
+    padding: 40px 20px;
+    opacity: 0.75;
+    animation: fadeUp 0.4s var(--ease);
 }
 
 .empty-state span {
-  font-size: 42px;
-  display: block;
-  margin-bottom: 10px;
+    font-size: 42px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* =====================================================
-   REMINDER POPUP
-===================================================== */
+     REMINDER POPUP
+  ===================================================== */
 .reminder-popup {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0,0,0,0.85);
-  color: #fff;
-  padding: 16px;
-  border-radius: 16px;
-  text-align: center;
-  z-index: 9999;
-  width: 280px;
-}
-
-.reminder-popup button {
-  margin-top: 8px;
-  padding: 6px 10px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-size: 13px;
-}
-
-.reminder-popup .done {
-  background: #4caf50;
-  color: #fff;
-}
-
-.reminder-popup .snooze {
-  background: #ff9800;
-  color: #fff;
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    padding: 16px;
+    border-radius: 18px;
+    text-align: center;
+    z-index: 9999;
+    width: 280px;
+    animation: fadeUp 0.35s var(--ease);
 }
 
 /* =====================================================
-   ADD TASK MODAL (BOTTOM SHEET)
-===================================================== */
+     ADD TASK MODAL (GLASS BOTTOM SHEET)
+  ===================================================== */
 .modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-  display: flex;
-  align-items: flex-end;
-  z-index: 9999;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: flex-end;
+    z-index: 9999;
 }
 
 .modal.hidden {
-  display: none;
+    display: none;
 }
 
 .modal-sheet {
-  width: 100%;
-  max-width: 420px;
-  margin: auto;
-  background: var(--card-light);
-  backdrop-filter: blur(20px);
-  border-radius: 24px 24px 0 0;
-  padding: 20px;
-  animation: slideUp 0.25s ease;
+    width: 100%;
+    max-width: 420px;
+    margin: auto;
+    background: var(--glass-light);
+    backdrop-filter: blur(30px) saturate(160%);
+    -webkit-backdrop-filter: blur(30px) saturate(160%);
+    border-radius: 28px 28px 0 0;
+    padding: 22px;
+    border-top: 1px solid rgba(255, 255, 255, 0.35);
+    animation: slideUp 0.3s var(--ease);
 }
 
 body.dark .modal-sheet {
-  background: var(--card-dark);
-}
-
-.modal-sheet input {
-  width: 100%;
-  padding: 14px;
-  margin-bottom: 12px;
-  border-radius: 12px;
-  border: none;
-}
-
-.modal-sheet button {
-  width: 100%;
-  padding: 14px;
-  border-radius: 14px;
-  border: none;
-  font-size: 15px;
-  margin-top: 8px;
-}
-
-#modalAddBtn {
-  background: var(--accent);
-  color: #fff;
-}
-
-.close-modal {
-  background: transparent;
-  color: inherit;
+    background: var(--glass-dark);
 }
 
 @keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
 }
 
 /* =====================================================
-   BOTTOM NAVIGATION
-===================================================== */
+     BOTTOM NAVIGATION (GLASS)
+  ===================================================== */
 .bottom-nav {
-  position: fixed;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 32px);
-  max-width: 420px;
-  background: var(--card-light);
-  backdrop-filter: blur(18px);
-  border-radius: 24px;
-  padding: 10px 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-  z-index: 999;
+    position: fixed;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 32px);
+    max-width: 420px;
+    background: var(--glass-light);
+    backdrop-filter: blur(28px) saturate(160%);
+    -webkit-backdrop-filter: blur(28px) saturate(160%);
+    border-radius: 28px;
+    padding: 12px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    z-index: 999;
+}
+
+body.dark .bottom-nav {
+    background: var(--glass-dark);
 }
 
 .nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 12px;
-  text-decoration: none;
-  color: inherit;
-  opacity: 0.7;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 12px;
+    text-decoration: none;
+    color: inherit;
+    opacity: 0.65;
+    transition: opacity 0.2s, transform 0.2s;
 }
 
 .nav-item.active {
-  opacity: 1;
-  color: var(--accent);
+    opacity: 1;
+    color: var(--accent);
+    transform: translateY(-2px);
 }
 
 .nav-item span {
-  font-size: 20px;
+    font-size: 20px;
 }
 
 .nav-add {
-  width: 56px;
-  height: 56px;
-  background: linear-gradient(135deg, #4f46e5, #6d5dfc);
-  border-radius: 50%;
-  border: none;
-  color: #fff;
-  font-size: 26px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: translateY(-24px);
-  box-shadow: 0 12px 25px rgba(79,70,229,0.5);
-   cursor: pointer;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #4f46e5, #6d5dfc);
+    border-radius: 50%;
+    border: none;
+    color: #fff;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(-28px);
+    box-shadow: 0 16px 34px rgba(79, 70, 229, 0.6);
+    cursor: pointer;
+    transition: transform 0.2s var(--ease);
+}
+
+.nav-add:active {
+    transform: translateY(-28px) scale(0.9);
+}
+
+/* =====================================================
+     FALLBACK (ANDROID SAFE)
+  ===================================================== */
+@supports not (backdrop-filter: blur(10px)) {
+
+    .card,
+    .modal-sheet,
+    .bottom-nav {
+        background: rgba(255, 255, 255, 0.95);
+    }
+
+    body.dark .card,
+    body.dark .modal-sheet,
+    body.dark .bottom-nav {
+        background: rgba(30, 30, 50, 0.95);
+    }
+}
+
+/* =====================================================
+     RESPONSIVE
+  ===================================================== */
+@media (max-width: 360px) {
+    .container {
+        padding: 16px;
+    }
 }
