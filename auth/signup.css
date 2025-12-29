@@ -1,105 +1,241 @@
 :root {
-    --bg-light: #f4f6fb;
-    --bg-dark: #0f1220;
-    --card-light: rgba(255,255,255,0.6);
-    --card-dark: rgba(25,25,45,0.6);
-    --text-light: #111;
-    --text-dark: #fff;
-    --accent: #6c63ff;
-  }
-  
-  /* Reset */
-  * {
-    box-sizing: border-box;
-    font-family: Inter, system-ui, -apple-system;
-  }
-  
-  body {
-    margin: 0;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--bg-light);
-    color: var(--text-light);
-  }
-  
-  body.dark {
-    background: var(--bg-dark);
-    color: var(--text-dark);
-  }
-  
-  .theme-toggle {
-    position: fixed;
-    top: 18px;
-    right: 18px;
-    background: none;
-    border: none;
-    font-size: 22px;
-    cursor: pointer;
-    color: inherit;
-  }
-  
-  /* Card */
+  --bg-light: #f4f6fb;
+  --bg-dark: #0f1220;
+
+  --glass-light: rgba(255, 255, 255, 0.85);
+  --glass-dark: rgba(25, 28, 45, 0.7);
+
+  --text-light: #111;
+  --text-dark: #fff;
+
+  --accent: #6c63ff;
+  --accent-hover: #5b54e0;
+  --radius: 32px;
+}
+
+/* =====================================================
+   RESET & BASE
+==================================================== */
+* {
+  box-sizing: border-box;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top, #eef1ff, var(--bg-light));
+  color: var(--text-light);
+  transition: background 0.4s ease, color 0.4s ease;
+  overflow-x: hidden;
+}
+
+body.dark {
+  background: radial-gradient(circle at top, #161a3a, var(--bg-dark));
+  color: var(--text-dark);
+}
+
+/* =====================================================
+   THEME TOGGLE
+==================================================== */
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  z-index: 100;
+}
+
+body.dark .theme-toggle {
+  background: #1e2235;
+  color: white;
+}
+
+/* =====================================================
+   AUTH CARD (Consistent with Login)
+==================================================== */
+.auth-card {
+  width: 100%;
+  max-width: 380px;
+  padding: 48px 40px;
+  border-radius: var(--radius);
+  background: var(--glass-light);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.5);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+  animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: center;
+}
+
+body.dark .auth-card {
+  background: var(--glass-dark);
+  border-color: rgba(255,255,255,0.05);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+}
+
+.auth-card h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.muted {
+  font-size: 14px;
+  opacity: 0.5;
+  margin: 8px 0 32px;
+}
+
+/* =====================================================
+   INPUTS (NO-BREAK LOGIC)
+==================================================== */
+input {
+  width: 100%;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: #fff;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.2s ease;
+  display: block;
+  /* Prevent overflow stretching */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.dark input {
+  background: rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.1);
+}
+
+/* =====================================================
+   SIGN UP BUTTON & LOADING
+==================================================== */
+#signupBtn {
+  width: 100%;
+  padding: 16px;
+  margin-top: 10px;
+  border-radius: 16px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px -5px rgba(108, 99, 255, 0.4);
+}
+
+#signupBtn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+#signupBtn:active {
+  transform: scale(0.98);
+}
+
+/* Loading State for Signup */
+#signupBtn.loading {
+  color: transparent;
+  pointer-events: none;
+  position: relative;
+}
+
+#signupBtn.loading::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 50%;
+  left: 50%;
+  margin: -10px 0 0 -10px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* =====================================================
+   MESSAGES & SWITCH LINK
+==================================================== */
+#msg {
+  margin-top: 16px;
+  font-size: 13px;
+  min-height: 16px;
+}
+
+.switch {
+  margin-top: 24px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.switch a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+.switch a:hover {
+  text-decoration: underline;
+}
+
+/* =====================================================
+   ANIMATIONS
+==================================================== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-10px); }
+  40% { transform: translateX(10px); }
+  60% { transform: translateX(-10px); }
+  80% { transform: translateX(10px); }
+}
+
+.shake {
+  animation: shake 0.4s ease !important;
+}
+
+/* =====================================================
+   MOBILE
+==================================================== */
+@media (max-width: 400px) {
   .auth-card {
-    width: 330px;
-    padding: 28px;
-    border-radius: 18px;
-    background: var(--card-light);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    margin: 15px;
+    padding: 32px 24px;
   }
-  
-  body.dark .auth-card {
-    background: var(--card-dark);
-  }
-  
-  h1 {
-    margin: 0;
-    text-align: center;
-  }
-  
-  .muted {
-    text-align: center;
-    opacity: 0.7;
-    margin-bottom: 20px;
-  }
-  
-  input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 12px;
-    border-radius: 10px;
-    border: none;
-    outline: none;
-  }
-  
-  button {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    background: var(--accent);
-    color: white;
-    font-size: 15px;
-    cursor: pointer;
-  }
-  
-  .switch {
-    text-align: center;
-    margin-top: 12px;
-    font-size: 14px;
-  }
-  
-  .switch a {
-    color: var(--accent);
-    text-decoration: none;
-  }
-  
-  #msg {
-    text-align: center;
-    margin-top: 10px;
-    font-size: 14px;
-  }
-  
+}
