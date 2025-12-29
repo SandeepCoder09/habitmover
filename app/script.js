@@ -380,6 +380,20 @@ if (lastNotify !== todayKey() && Notification.permission === "granted") {
 }
 
 /* =====================================================
+   SPLASH SCREEN FIX (SAFE)
+===================================================== */
+function hideSplash() {
+  const splash = document.getElementById("splash");
+  if (splash) splash.style.display = "none";
+}
+
+// 1️⃣ Hide splash when DOM is ready
+document.addEventListener("DOMContentLoaded", hideSplash);
+
+// 2️⃣ Failsafe: hide splash after 2 seconds no matter what
+setTimeout(hideSplash, 2000);
+
+/* =====================================================
    INIT
 ===================================================== */
 renderTasks();
