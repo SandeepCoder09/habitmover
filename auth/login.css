@@ -174,11 +174,32 @@ input:focus {
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
   box-shadow: 0 14px 32px rgba(108,99,255,0.5);
 }
 
 #loginBtn:active {
   transform: scale(0.96);
+}
+
+#loginBtn.loading::after {
+  content: "";
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+#loginBtn.loading {
+  opacity: 0.85;
+  pointer-events: none;
 }
 
 /* =====================================================
