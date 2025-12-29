@@ -2,18 +2,18 @@
   --bg-light: #f4f6fb;
   --bg-dark: #0f1220;
 
-  --card-light: rgba(255, 255, 255, 0.7);
-  --card-dark: rgba(25, 25, 45, 0.7);
+  --glass-light: rgba(255, 255, 255, 0.45);
+  --glass-dark: rgba(20, 20, 40, 0.55);
 
   --text-light: #111;
-  --text-dark: #ffffff;
+  --text-dark: #fff;
 
   --accent: #6c63ff;
-  --radius: 22px;
+  --radius: 28px;
 }
 
 /* =====================================================
-   RESET & BASE
+   RESET
 ===================================================== */
 * {
   box-sizing: border-box;
@@ -49,35 +49,35 @@ body.dark {
   cursor: pointer;
   color: inherit;
   opacity: 0.75;
-  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-.theme-toggle:hover { opacity: 1; }
-.theme-toggle:active { transform: scale(0.9); }
+.theme-toggle:active {
+  transform: scale(0.9);
+}
 
 /* =====================================================
-   LOGIN CARD (PREMIUM GLASS)
+   LOGIN CARD (HIGH BLUR GLASS)
 ===================================================== */
 .login-card {
   width: 360px;
-  padding: 34px 30px;
+  padding: 38px 32px;
   border-radius: var(--radius);
 
-  background: var(--card-light);
-  backdrop-filter: blur(26px) saturate(160%);
-  -webkit-backdrop-filter: blur(26px) saturate(160%);
+  background: var(--glass-light);
+  backdrop-filter: blur(48px) saturate(190%);
+  -webkit-backdrop-filter: blur(48px) saturate(190%);
 
-  border: 1px solid rgba(255,255,255,0.35);
+  border: 1px solid rgba(255,255,255,0.45);
   box-shadow:
-    0 40px 80px rgba(0,0,0,0.18),
-    inset 0 1px 0 rgba(255,255,255,0.4);
+    0 60px 120px rgba(0,0,0,0.28),
+    inset 0 1px 0 rgba(255,255,255,0.45);
 
   animation: fadeUp 0.45s ease;
 }
 
 body.dark .login-card {
-  background: var(--card-dark);
-  border-color: rgba(255,255,255,0.15);
+  background: var(--glass-dark);
+  border-color: rgba(255,255,255,0.18);
 }
 
 /* =====================================================
@@ -98,7 +98,7 @@ body.dark .login-card {
 }
 
 /* =====================================================
-   INPUTS (APP-LIKE)
+   INPUTS
 ===================================================== */
 input {
   width: 100%;
@@ -109,7 +109,6 @@ input {
   background: rgba(255,255,255,0.75);
   font-size: 14px;
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 body.dark input {
@@ -124,7 +123,7 @@ input:focus {
 }
 
 /* =====================================================
-   PASSWORD FIELD
+   PASSWORD
 ===================================================== */
 .password-wrap {
   position: relative;
@@ -140,7 +139,9 @@ input:focus {
   opacity: 0.6;
 }
 
-.toggle-pass:hover { opacity: 1; }
+.toggle-pass:active {
+  opacity: 1;
+}
 
 /* =====================================================
    REMEMBER ME
@@ -149,7 +150,7 @@ input:focus {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 6px 0 20px;
+  margin: 6px 0 22px;
   font-size: 14px;
   opacity: 0.85;
 }
@@ -161,7 +162,7 @@ input:focus {
 }
 
 /* =====================================================
-   LOGIN BUTTON (PRIMARY)
+   BUTTON
 ===================================================== */
 #loginBtn {
   width: 100%;
@@ -174,54 +175,56 @@ input:focus {
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 14px 32px rgba(108,99,255,0.5);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 #loginBtn:active {
   transform: scale(0.96);
-  box-shadow: 0 8px 18px rgba(108,99,255,0.4);
-}
-
-/* =====================================================
-   LOADING STATE
-===================================================== */
-#loginBtn.loading {
-  pointer-events: none;
-  opacity: 0.85;
-}
-
-#loginBtn.loading::after {
-  content: "";
-  width: 18px;
-  height: 18px;
-  border: 3px solid rgba(255,255,255,0.4);
-  border-top: 3px solid #fff;
-  border-radius: 50%;
-  display: inline-block;
-  margin-left: 10px;
-  animation: spin 1s linear infinite;
 }
 
 /* =====================================================
    MESSAGE
 ===================================================== */
 #msg {
-  margin-top: 16px;
+  margin-top: 14px;
   text-align: center;
   font-size: 14px;
   opacity: 0.9;
 }
 
 /* =====================================================
-   ANIMATIONS
+   FOOTER
+===================================================== */
+.login-footer {
+  margin-top: 26px;
+  padding-top: 16px;
+  text-align: center;
+  border-top: 1px solid rgba(0,0,0,0.08);
+}
+
+body.dark .login-footer {
+  border-top-color: rgba(255,255,255,0.12);
+}
+
+.footer-text {
+  font-size: 14px;
+  opacity: 0.75;
+}
+
+.footer-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* =====================================================
+   ANIMATION
 ===================================================== */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
 }
 
 /* =====================================================
@@ -230,6 +233,6 @@ input:focus {
 @media (max-width: 360px) {
   .login-card {
     width: calc(100% - 32px);
-    padding: 30px 24px;
+    padding: 32px 26px;
   }
 }
