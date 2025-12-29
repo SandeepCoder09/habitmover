@@ -1,15 +1,36 @@
 /* =====================================================
-   STORAGE KEYS
+   1. EMERGENCY LOGOUT & AUTH GUARD (TOP PRIORITY)
 ===================================================== */
 const AUTH_KEY = "HabitMover_auth";
+
+const handleLogout = () => {
+    console.log("Logout initiated...");
+    localStorage.removeItem(AUTH_KEY);
+    
+    // Try multiple path depths to ensure it finds the login page
+    // If your app is at /app/index.html, use ../auth/login.html
+    // If everything is in one folder, use ./login.html
+    window.location.replace("../auth/login.html");
+};
+
+// Attach logout immediately before other scripts run
+const logoutBtn = document.getElementById("logoutBtn");
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", handleLogout);
+}
+
+// Auth Guard: Stop script if not logged in
+const auth = JSON.parse(localStorage.getItem(AUTH_KEY));
+if (!auth || !auth.loggedIn) {
+    window.location.replace("../auth/login.html");
+}
+
+/* =====================================================
+   2. STORAGE KEYS & DATABASE
+===================================================== */
 const TASK_KEY = "HabitMover_tasks";
 const THEME_KEY = "HabitMover_theme";
 const STREAK_KEY = "HabitMover_streak";
-const HISTORY_KEY = "HabitMover_history";
-
-/* =====================================================
-   OFFLINE BACKUP (INDEXEDDB - PREVENTS GHOST TASKS)
-===================================================== */
 const DB_NAME = "HabitMoverDB";
 const STORE_NAME = "tasks";
 
@@ -27,10 +48,6 @@ async function openDB() {
     });
 }
 
-/**
- * FIXED: Syncs IndexedDB with current state. 
- * Clears old entries so deleted tasks don't reappear on refresh.
- */
 async function syncBackup(tasksToStore) {
     try {
         const db = await openDB();
@@ -38,19 +55,11 @@ async function syncBackup(tasksToStore) {
         const store = tx.objectStore(STORE_NAME);
         await store.clear(); 
         tasksToStore.forEach(t => store.add(t));
-    } catch (err) { console.warn("Offline backup sync failed", err); }
+    } catch (err) { console.warn("Backup sync failed", err); }
 }
 
 /* =====================================================
-   AUTH GUARD
-===================================================== */
-const auth = JSON.parse(localStorage.getItem(AUTH_KEY));
-if (!auth || !auth.loggedIn) {
-    window.location.replace("../auth/login.html");
-}
-
-/* =====================================================
-   ELEMENTS (DOM)
+   3. DOM ELEMENTS
 ===================================================== */
 const addTaskBtn = document.getElementById("addTaskBtn");
 const addModal = document.getElementById("addModal");
@@ -60,32 +69,27 @@ const modalTaskTime = document.getElementById("modalTaskTime");
 const modalAddBtn = document.getElementById("modalAddBtn");
 const taskList = document.getElementById("taskList");
 const emptyState = document.getElementById("emptyState");
-const logoutBtn = document.getElementById("logoutBtn");
 const themeToggle = document.getElementById("themeToggle");
 const progressFill = document.getElementById("progressFill");
 const progressPercent = document.getElementById("progressPercent");
 const streakCountEl = document.getElementById("streakCount");
 
 /* =====================================================
-   STATE & DATA HANDLING
+   4. TASK ENGINE
 ===================================================== */
 let tasks = JSON.parse(localStorage.getItem(TASK_KEY)) || [];
 
-/**
- * Saves current task list to LocalStorage and IndexedDB backup.
- */
 function saveAll() {
     localStorage.setItem(TASK_KEY, JSON.stringify(tasks));
-    syncBackup(tasks); 
+    syncBackup(tasks);
     updateProgress();
 }
 
-/**
- * Updates the progress bar and streak counter.
- */
 function updateProgress() {
     const streak = JSON.parse(localStorage.getItem(STREAK_KEY)) || { count: 0 };
-    streakCountEl.textContent = streak.count;
+    if(streakCountEl) streakCountEl.textContent = streak.count;
+
+    if (!progressFill || !progressPercent) return;
 
     if (tasks.length === 0) {
         progressFill.style.width = "0%";
@@ -99,12 +103,10 @@ function updateProgress() {
     progressPercent.textContent = percent + "%";
 }
 
-/* =====================================================
-   RENDER TASKS (MATCHES ENHANCED CSS STRUCTURE)
-===================================================== */
 function renderTasks() {
+    if(!taskList) return;
     taskList.innerHTML = "";
-    emptyState.style.display = tasks.length === 0 ? "block" : "none";
+    if(emptyState) emptyState.style.display = tasks.length === 0 ? "block" : "none";
 
     tasks.forEach((t, i) => {
         const card = document.createElement("div");
@@ -122,14 +124,12 @@ function renderTasks() {
             </button>
         `;
 
-        // Handle Status Change
         card.querySelector("input").onchange = () => {
             t.done = !t.done;
             saveAll();
             renderTasks();
         };
 
-        // Handle Deletion
         card.querySelector(".del-btn").onclick = () => {
             tasks.splice(i, 1);
             saveAll();
@@ -141,56 +141,41 @@ function renderTasks() {
 }
 
 /* =====================================================
-   EVENTS
+   5. MODAL & THEME
 ===================================================== */
+if(modalAddBtn) {
+    modalAddBtn.onclick = () => {
+        const name = modalTaskName.value.trim();
+        if (!name) return;
+        tasks.push({ name, time: modalTaskTime.value, done: false });
+        modalTaskName.value = "";
+        addModal.classList.add("hidden");
+        saveAll();
+        renderTasks();
+    };
+}
 
-// Modal: Add New Habit
-modalAddBtn.onclick = () => {
-    const name = modalTaskName.value.trim();
-    if (!name) return;
+if(addTaskBtn) {
+    addTaskBtn.onclick = () => {
+        addModal.classList.remove("hidden");
+        setTimeout(() => modalTaskName.focus(), 100);
+    };
+}
 
-    tasks.push({ 
-        name, 
-        time: modalTaskTime.value, 
-        done: false 
-    });
+if(closeModalBtn) closeModalBtn.onclick = () => addModal.classList.add("hidden");
 
-    modalTaskName.value = "";
-    modalTaskTime.value = "";
-    addModal.classList.add("hidden");
-    
-    saveAll();
-    renderTasks();
-};
-
-// Modal: UI Controls
-addTaskBtn.onclick = () => {
-    addModal.classList.remove("hidden");
-    setTimeout(() => modalTaskName.focus(), 100);
-};
-
-closeModalBtn.onclick = () => addModal.classList.add("hidden");
-
-// Theme Toggle
-themeToggle.onclick = () => {
-    const isDark = document.body.classList.toggle("dark");
-    localStorage.setItem(THEME_KEY, isDark ? "dark" : "light");
-    themeToggle.innerHTML = isDark 
-        ? '<span class="ri-sun-line"></span>' 
-        : '<span class="ri-moon-line"></span>';
-};
-
-// Logout: Redirects with replace to prevent "Back" button navigation
-logoutBtn.onclick = () => {
-    localStorage.removeItem(AUTH_KEY);
-    window.location.replace("../auth/login.html");
-};
+if(themeToggle) {
+    themeToggle.onclick = () => {
+        const isDark = document.body.classList.toggle("dark");
+        localStorage.setItem(THEME_KEY, isDark ? "dark" : "light");
+        themeToggle.innerHTML = isDark ? '<span class="ri-sun-line"></span>' : '<span class="ri-moon-line"></span>';
+    };
+}
 
 /* =====================================================
-   INITIALIZATION
+   6. INITIALIZATION
 ===================================================== */
 window.onload = () => {
-    // Hide Splash Screen
     const splash = document.getElementById("splash");
     if (splash) {
         setTimeout(() => {
@@ -199,10 +184,9 @@ window.onload = () => {
         }, 600);
     }
 
-    // Load Theme Preference
     if (localStorage.getItem(THEME_KEY) === "dark") {
         document.body.classList.add("dark");
-        themeToggle.innerHTML = '<span class="ri-sun-line"></span>';
+        if(themeToggle) themeToggle.innerHTML = '<span class="ri-sun-line"></span>';
     }
 
     renderTasks();
