@@ -293,6 +293,69 @@ body.dark .card {
 }
 
 /* =====================================================
+   TASK CHECKBOX → CIRCLE WITH CHECK ICON
+===================================================== */
+
+.task input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 0, 0, 0.25);
+    background: transparent;
+    cursor: pointer;
+    display: grid;
+    place-content: center;
+    transition: 
+        border-color 0.2s ease,
+        background 0.2s ease,
+        transform 0.15s ease;
+}
+
+/* Dark mode border */
+body.dark .task input[type="checkbox"] {
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Check icon */
+.task input[type="checkbox"]::before {
+    content: "✓";
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    transform: scale(0);
+    transition: transform 0.2s ease;
+    line-height: 1;
+}
+
+/* Checked state */
+.task input[type="checkbox"]:checked {
+    background: linear-gradient(135deg, #4f46e5, #6c63ff);
+    border-color: transparent;
+}
+
+/* Show check icon */
+.task input[type="checkbox"]:checked::before {
+    transform: scale(1);
+}
+
+/* Press feedback */
+.task input[type="checkbox"]:active {
+    transform: scale(0.9);
+}
+
+.task input[type="checkbox"]:checked {
+    animation: checkPop 0.2s ease;
+}
+
+@keyframes checkPop {
+    0% { transform: scale(0.9); }
+    60% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* =====================================================
    TASK CHECKBOX → CIRCULAR RADIO STYLE
 ===================================================== */
 
