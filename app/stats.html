@@ -2,29 +2,118 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Habit Mover — Weekly Stats</title>
+  <title>Habit Mover – Stats</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Remix Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
-
+  <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="stats.css" />
+
+  <!-- Remix Icons -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
+    rel="stylesheet"
+  />
 </head>
 <body>
 
-  <!-- Top Bar -->
-  <header class="topbar">
-    <button id="backBtn">
-      <span class="ri-arrow-left-line"></span>
-    </button>
-    <h1>Weekly Stats</h1>
-    <div></div>
-  </header>
+<header class="topbar">
+  <h1>Statistics</h1>
+</header>
 
-  <main class="container">
-    <div id="statsList"></div>
-  </main>
+<main class="container">
 
-  <script src="stats.js"></script>
+  <!-- SUMMARY CARDS -->
+  <section class="stats-grid">
+    <div class="card stat">
+      <span class="label">Total Habits</span>
+      <strong id="totalHabits">0</strong>
+    </div>
+
+    <div class="card stat">
+      <span class="label">Completed Today</span>
+      <strong id="doneToday">0</strong>
+    </div>
+
+    <div class="card stat">
+      <span class="label">Current Streak</span>
+      <strong id="currentStreak">0 🔥</strong>
+    </div>
+  </section>
+
+  <!-- WEEKLY OVERVIEW -->
+  <section class="card">
+    <h3>Last 7 Days</h3>
+
+    <div class="week-bars" id="weekBars">
+      <!-- bars injected by JS -->
+    </div>
+  </section>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a href="index.html" class="nav-item">
+    <span class="ri-home-5-line"></span>
+    <small>Home</small>
+  </a>
+
+  <a href="stats.html" class="nav-item active">
+    <span class="ri-bar-chart-line"></span>
+    <small>Stats</small>
+  </a>
+
+  <button class="nav-add" disabled>
+    <span class="ri-add-line"></span>
+  </button>
+
+  <a href="history.html" class="nav-item">
+    <span class="ri-time-line"></span>
+    <small>History</small>
+  </a>
+
+  <a href="profile.html" class="nav-item">
+    <span class="ri-user-line"></span>
+    <small>Profile</small>
+  </a>
+</nav>
+
+<script src="script.js"></script>
+
+<!-- VERY SMALL STATS SCRIPT (SAFE) -->
+<script>
+  const TASK_KEY = "HabitMover_tasks";
+  const STREAK_KEY = "HabitMover_streak";
+  const HISTORY_KEY = "HabitMover_history";
+
+  const tasks = JSON.parse(localStorage.getItem(TASK_KEY)) || [];
+  const streak = JSON.parse(localStorage.getItem(STREAK_KEY)) || { count: 0 };
+  const history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+
+  document.getElementById("totalHabits").textContent = tasks.length;
+  document.getElementById("doneToday").textContent =
+    tasks.filter(t => t.done).length;
+  document.getElementById("currentStreak").textContent =
+    streak.count + " 🔥";
+
+  // Last 7 days bars
+  const bars = document.getElementById("weekBars");
+  history.slice(-7).forEach(day => {
+    const percent = day.total
+      ? Math.round((day.done / day.total) * 100)
+      : 0;
+
+    const bar = document.createElement("div");
+    bar.className = "day-bar";
+    bar.innerHTML = `
+      <div class="bar">
+        <div class="fill" style="height:${percent}%"></div>
+      </div>
+      <small>${day.date.slice(5)}</small>
+    `;
+    bars.appendChild(bar);
+  });
+</script>
+
 </body>
 </html>
