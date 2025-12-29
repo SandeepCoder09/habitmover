@@ -1,0 +1,57 @@
+/* ================= HISTORY LIST ================= */
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ================= HISTORY CARD ================= */
+
+.history-card {
+  padding: 16px;
+}
+
+.history-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.history-top strong {
+  font-size: 14px;
+}
+
+.history-top span {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+/* ================= PROGRESS BAR ================= */
+
+.history-bar {
+  height: 10px;
+  background: rgba(0,0,0,0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+body.dark .history-bar {
+  background: rgba(255,255,255,0.15);
+}
+
+.history-bar .fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6c63ff, #8f88ff);
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+/* ================= TEXT ================= */
+
+.history-card small {
+  font-size: 12px;
+  opacity: 0.75;
+}
