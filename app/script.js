@@ -394,6 +394,18 @@ document.addEventListener("DOMContentLoaded", hideSplash);
 setTimeout(hideSplash, 2000);
 
 /* =====================================================
+   GLOBAL + BUTTON FIX
+===================================================== */
+const addBtn = document.getElementById("addTaskBtn");
+const addModal = document.getElementById("addModal");
+
+if (addBtn && !addModal) {
+  addBtn.onclick = () => {
+    window.location.href = "index.html";
+  };
+}
+
+/* =====================================================
    INIT
 ===================================================== */
 renderTasks();
