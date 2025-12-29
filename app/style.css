@@ -382,7 +382,7 @@ body.dark .bottom-nav {
 }
 
 /* =====================================================
-   MODAL CONTENT STYLING (FINAL)
+   MODAL CONTENT STYLING (FINAL FIXED)
 ===================================================== */
 
 /* Modal title */
@@ -398,18 +398,21 @@ body.dark .bottom-nav {
     width: 100%;
     padding: 12px 14px;
     margin-bottom: 12px;
-    border-radius: 14px;
-    border: 1px solid rgba(255,255,255,0.35);
-    background: rgba(255,255,255,0.6);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.65);
     color: #111;
     font-size: 14px;
     outline: none;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
-body.dark .modal-sheet input {
-    background: rgba(30,30,50,0.6);
-    border-color: rgba(255,255,255,0.15);
+/* Dark mode inputs */
+body.dark .modal-sheet input[type="text"],
+body.dark .modal-sheet input[type="time"] {
+    background: rgba(30, 30, 50, 0.6);
+    border-color: rgba(255, 255, 255, 0.15);
     color: #fff;
 }
 
@@ -418,11 +421,11 @@ body.dark .modal-sheet input {
     border-color: var(--accent);
 }
 
-/* Buttons container (auto spacing) */
+/* Buttons */
 .modal-sheet button {
     width: 100%;
     padding: 12px;
-    border-radius: 14px;
+    border-radius: 16px;
     border: none;
     font-size: 14px;
     cursor: pointer;
@@ -438,12 +441,12 @@ body.dark .modal-sheet input {
 
 /* Cancel button */
 .close-modal {
-    background: rgba(0,0,0,0.08);
+    background: rgba(0, 0, 0, 0.08);
     color: inherit;
 }
 
 body.dark .close-modal {
-    background: rgba(255,255,255,0.12);
+    background: rgba(255, 255, 255, 0.12);
 }
 
 /* Button press effect */
@@ -453,10 +456,6 @@ body.dark .close-modal {
 
 /* Small screens */
 @media (max-width: 360px) {
-    .modal-sheet {
-        padding: 18px;
-    }
-
     .modal-sheet h3 {
         font-size: 16px;
     }
