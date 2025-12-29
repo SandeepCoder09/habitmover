@@ -274,6 +274,34 @@ body.dark .login-footer {
 }
 
 /* =====================================================
+   FORGOT PASSWORD LINK
+===================================================== */
+.forgot-row {
+  display: flex;
+  justify-content: flex-end; /* Aligns to the right */
+  margin: -8px 0 16px; /* Pulls it closer to the password field */
+}
+
+.forgot-link {
+  font-size: 13px;
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+  opacity: 0.8;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.forgot-link:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+/* Adjusting the remember-row for Login page to look better with the new link */
+.remember-row {
+  margin-top: 0; /* Reduces gap since forgot-row now takes space */
+}
+
+/* =====================================================
    ANIMATIONS
 ==================================================== */
 @keyframes fadeUp {
