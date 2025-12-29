@@ -1,45 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Habit Mover — Login</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+  <meta charset="UTF-8" />
+  <title>Habit Mover — Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Remix Icons -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
-      rel="stylesheet"
+  <!-- Remix Icons -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="login.css" />
+</head>
+<body>
+
+  <!-- Theme Toggle -->
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+    <span class="ri-moon-line"></span>
+  </button>
+
+  <!-- Login Card -->
+  <div class="login-card">
+    <h1>Habit Mover</h1>
+    <p class="muted">Move your habits, move your life</p>
+
+    <input
+      type="email"
+      id="email"
+      placeholder="Email"
+      autocomplete="off"
     />
 
-    <link rel="stylesheet" href="login.css" />
-  </head>
-  <body>
-    <!-- Theme Toggle -->
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-      <span class="ri-moon-line"></span>
-    </button>
-
-    <!-- Login Card -->
-    <div class="login-card">
-      <h1>Habit Mover</h1>
-      <p class="muted">Move your habits, move your life</p>
-
-      <input type="email" id="email" placeholder="Email" autocomplete="off" />
-      <input type="password" id="password" placeholder="Password" />
-      <span class="toggle-pass ri-eye-line" id="togglePass"></span>
-      <div class="remember-row">
-        <label>
-          <input type="checkbox" id="rememberMe" />
-          Remember me
-        </label>
-      </div>
-
-      <button id="loginBtn">Login</button>
-      <p id="msg"></p>
-      <p>Not Joined Habit Mover</p>
-      <a href="signup.html">Join Now</a>
+    <div class="password-wrap">
+      <input
+        type="password"
+        id="password"
+        placeholder="Password"
+      />
+      <span
+        class="toggle-pass ri-eye-line"
+        id="togglePass"
+        aria-label="Toggle password"
+      ></span>
     </div>
 
-    <script src="login.js"></script>
-  </body>
+    <div class="remember-row">
+      <label>
+        <input type="checkbox" id="rememberMe" />
+        Remember me
+      </label>
+    </div>
+
+    <button id="loginBtn">Login</button>
+    <p id="msg"></p>
+
+    <!-- Footer -->
+    <div class="login-footer">
+      <div class="footer-text">Not joined Habit Mover?</div>
+      <a href="signup.html" class="footer-link">Join Now</a>
+    </div>
+  </div>
+
+  <script src="login.js"></script>
+</body>
 </html>
