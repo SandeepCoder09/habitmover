@@ -211,6 +211,31 @@ input:focus {
   transform: scale(0.98);
 }
 
+/* --- LOADING STATE --- */
+#loginBtn.loading {
+  color: transparent; /* Hides the "Login" text */
+  pointer-events: none; /* Prevents multiple clicks */
+  position: relative;
+}
+
+#loginBtn.loading::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 50%;
+  left: 50%;
+  margin: -10px 0 0 -10px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* =====================================================
    MESSAGES & FOOTER
 ==================================================== */
