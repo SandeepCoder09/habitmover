@@ -144,6 +144,42 @@ body.dark .progress-bar {
     transition: width 0.45s var(--ease);
 }
 
+/* Progress animation polish */
+.progress-fill {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Glow effect (triggered by JS) */
+.progress-fill.glow {
+    box-shadow: 0 0 10px rgba(108, 99, 255, 0.6);
+    transition: box-shadow 0.4s ease;
+}
+
+/* Optional shimmer */
+.progress-fill::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        transparent 30%,
+        rgba(255,255,255,0.35) 50%,
+        transparent 70%
+    );
+    transform: translateX(-100%);
+}
+
+.progress-fill.glow::after {
+    animation: shimmer 0.6s ease;
+}
+
+@keyframes shimmer {
+    to {
+        transform: translateX(100%);
+    }
+}
+
 /* Streak text stays readable but compact */
 .streak-box {
     font-size: 13px;
