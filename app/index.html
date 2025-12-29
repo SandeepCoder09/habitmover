@@ -86,7 +86,9 @@
       <div id="taskList"></div>
     </main
 
-    <button id="installBtn" hidden>Install App</button>
+    <button id="installBtn" hidden>
+  Install Habit Mover
+</button>
 <!-- main Script -->
     <script src="script.js"></script>
 
@@ -102,19 +104,31 @@
     <!-- install button js -->
     <script>
   let deferredPrompt;
-  const btn = document.getElementById("installBtn");
+  const installBtn = document.getElementById("installBtn");
 
   window.addEventListener("beforeinstallprompt", (e) => {
+    // Stop Chrome from showing default mini-infobar
     e.preventDefault();
-    deferredPrompt = e;
-    btn.hidden = false;
 
-    btn.addEventListener("click", async () => {
-      btn.hidden = true;
+    // Save the event
+    deferredPrompt = e;
+
+    // Show our install button
+    installBtn.hidden = false;
+
+    installBtn.addEventListener("click", async () => {
+      installBtn.hidden = true;
       deferredPrompt.prompt();
-      await deferredPrompt.userChoice;
+
+      const choiceResult = await deferredPrompt.userChoice;
       deferredPrompt = null;
     });
+  });
+
+  // Optional: hide button after app is installed
+  window.addEventListener("appinstalled", () => {
+    installBtn.hidden = true;
+    console.log("Habit Mover installed");
   });
 </script>
 
