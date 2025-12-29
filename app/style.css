@@ -365,4 +365,5 @@ body.dark .modal-sheet {
   justify-content: center;
   transform: translateY(-24px);
   box-shadow: 0 12px 25px rgba(79,70,229,0.5);
+   cursor: pointer;
 }
