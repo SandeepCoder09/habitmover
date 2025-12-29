@@ -27,33 +27,44 @@ try {
     localStorage.setItem(AUTH_KEY, JSON.stringify(remembered));
     window.location.href = "../app/index.html";
   }
-} catch {}
+} catch (e) {
+  console.error("Auto-login error:", e);
+}
 
 /* =====================================================
-   THEME
+   THEME INITIALIZATION & TOGGLE
 ===================================================== */
-if (localStorage.getItem(THEME_KEY) === "dark") {
-  document.body.classList.add("dark");
-  themeToggle.innerHTML = `<span class="ri-sun-line"></span>`;
-}
+const applyTheme = (theme) => {
+  const icon = themeToggle.querySelector("span");
+  if (theme === "dark") {
+    document.body.classList.add("dark");
+    if (icon) icon.className = "ri-sun-line";
+  } else {
+    document.body.classList.remove("dark");
+    if (icon) icon.className = "ri-moon-line";
+  }
+};
+
+// Initialize theme from storage
+applyTheme(localStorage.getItem(THEME_KEY));
 
 themeToggle.onclick = () => {
   const isDark = document.body.classList.toggle("dark");
   localStorage.setItem(THEME_KEY, isDark ? "dark" : "light");
-  themeToggle.innerHTML = isDark
-    ? `<span class="ri-sun-line"></span>`
-    : `<span class="ri-moon-line"></span>`;
+  applyTheme(isDark ? "dark" : "light");
 };
 
 /* =====================================================
-   PASSWORD TOGGLE
+   PASSWORD TOGGLE (FIXED ICON LOGIC)
 ===================================================== */
 if (togglePass) {
   togglePass.onclick = () => {
-    const show = passEl.type === "password";
-    passEl.type = show ? "text" : "password";
-    togglePass.className = show
-      ? "toggle-pass ri-eye-off-line"
+    const isPassword = passEl.type === "password";
+    passEl.type = isPassword ? "text" : "password";
+    
+    // Smoothly swap classes
+    togglePass.className = isPassword 
+      ? "toggle-pass ri-eye-off-line" 
       : "toggle-pass ri-eye-line";
   };
 }
@@ -64,8 +75,11 @@ if (togglePass) {
 function showError(text) {
   msg.textContent = text;
   msg.style.color = "#ef4444";
-  loginCard.classList.add("shake");
-  setTimeout(() => loginCard.classList.remove("shake"), 400);
+  
+  // Visual feedback: Shake the card
+  loginCard.style.animation = 'none';
+  void loginCard.offsetWidth; // Trigger reflow
+  loginCard.style.animation = "shake 0.4s ease";
 }
 
 function showSuccess(text) {
@@ -74,12 +88,17 @@ function showSuccess(text) {
 }
 
 function setLoading(state) {
-  loginBtn.disabled = state;
-  loginBtn.classList.toggle("loading", state);
+  if (state) {
+    loginBtn.disabled = true;
+    loginBtn.classList.add("loading");
+  } else {
+    loginBtn.disabled = false;
+    loginBtn.classList.remove("loading");
+  }
 }
 
 /* =====================================================
-   LOGIN
+   LOGIN LOGIC
 ===================================================== */
 loginBtn.onclick = () => {
   if (loginBtn.disabled) return;
@@ -95,6 +114,7 @@ loginBtn.onclick = () => {
 
   setLoading(true);
 
+  // Smooth fake delay to show the spinner
   setTimeout(() => {
     const users = JSON.parse(localStorage.getItem(USERS_KEY)) || [];
 
@@ -108,6 +128,7 @@ loginBtn.onclick = () => {
       return;
     }
 
+    // Create session object
     const session = {
       id: user.id,
       name: user.name,
@@ -116,8 +137,10 @@ loginBtn.onclick = () => {
       loginAt: Date.now()
     };
 
+    // Save session
     localStorage.setItem(AUTH_KEY, JSON.stringify(session));
 
+    // Handle Remember Me
     if (rememberMe.checked) {
       localStorage.setItem(REMEMBER_KEY, JSON.stringify(session));
     } else {
@@ -128,6 +151,6 @@ loginBtn.onclick = () => {
 
     setTimeout(() => {
       window.location.href = "../app/index.html";
-    }, 500);
-  }, 650); // smooth fake delay
+    }, 600);
+  }, 800); 
 };
