@@ -2,22 +2,22 @@
   --bg-light: #f4f6fb;
   --bg-dark: #0f1220;
 
-  --glass-light: rgba(255, 255, 255, 0.45); /* Increased opacity for readability */
-  --glass-dark: rgba(20, 20, 40, 0.55);
+  --glass-light: rgba(255, 255, 255, 0.85);
+  --glass-dark: rgba(25, 28, 45, 0.7);
 
   --text-light: #111;
   --text-dark: #fff;
 
   --accent: #6c63ff;
-  --accent-hover: #4f46e5;
-  --radius: 28px;
+  --accent-hover: #5b54e0;
+  --radius: 32px;
 }
 
 /* =====================================================
    RESET & BASE
-===================================================== */
+==================================================== */
 * {
-  box-sizing: border-box;
+  box-sizing: border-box; /* Crucial: padding won't increase width */
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-tap-highlight-color: transparent;
 }
@@ -25,30 +25,29 @@
 body {
   margin: 0;
   min-height: 100vh;
-  display: flex; /* Changed from grid to flex for better centering control */
+  display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at top left, #eef1ff 0%, var(--bg-light) 100%);
+  background: radial-gradient(circle at top, #eef1ff, var(--bg-light));
   color: var(--text-light);
-  transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow-x: hidden;
+  transition: background 0.4s ease, color 0.4s ease;
+  overflow: hidden; /* Prevents scrollbars if layout shifts */
 }
 
 body.dark {
-  background: radial-gradient(circle at top left, #1a1f3d 0%, var(--bg-dark) 100%);
+  background: radial-gradient(circle at top, #161a3a, var(--bg-dark));
   color: var(--text-dark);
 }
 
 /* =====================================================
    THEME TOGGLE
-===================================================== */
+==================================================== */
 .theme-toggle {
   position: fixed;
-  top: 24px;
-  right: 24px;
-  background: var(--glass-light);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.2);
+  top: 20px;
+  right: 20px;
+  background: white;
+  border: none;
   width: 44px;
   height: 44px;
   border-radius: 12px;
@@ -57,95 +56,72 @@ body.dark {
   justify-content: center;
   font-size: 20px;
   cursor: pointer;
-  color: inherit;
-  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease;
   z-index: 100;
 }
 
 body.dark .theme-toggle {
-  background: var(--glass-dark);
+  background: #1e2235;
+  color: white;
 }
 
-.theme-toggle:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+.theme-toggle:active {
+  transform: scale(0.9);
 }
 
 /* =====================================================
    LOGIN CARD
-===================================================== */
+==================================================== */
 .login-card {
   width: 100%;
-  max-width: 400px; /* Slightly wider for better balance */
-  margin: 20px;
+  max-width: 380px;
   padding: 48px 40px;
   border-radius: var(--radius);
-
   background: var(--glass-light);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.15),
-    inset 0 1px 1px rgba(255, 255, 255, 0.4);
-
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.5);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
   animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: center;
 }
 
 body.dark .login-card {
   background: var(--glass-dark);
-  border-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border-color: rgba(255,255,255,0.05);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
 }
 
-/* =====================================================
-   TYPOGRAPHY
-===================================================== */
 .login-card h1 {
   margin: 0;
-  text-align: center;
   font-size: 28px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  background: linear-gradient(135deg, var(--accent), #a29bfe);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  color: var(--accent);
 }
 
 .muted {
-  text-align: center;
-  font-size: 15px;
-  opacity: 0.6;
+  font-size: 14px;
+  opacity: 0.5;
   margin: 8px 0 32px;
 }
 
 /* =====================================================
-   INPUTS
-===================================================== */
-.password-wrap {
-  position: relative;
-  margin-bottom: 20px;
-}
-
+   INPUTS (FIXED FOR NO BREAKING)
+==================================================== */
 input[type="email"],
-input[type="password"] {
+input[type="password"],
+input[type="text"] {
   width: 100%;
   padding: 16px 18px;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
   border-radius: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: #fff;
   font-size: 15px;
   outline: none;
   transition: all 0.2s ease;
-  color: var(--text-light);
-}
-
-/* Extra padding for the password input so text doesn't hide behind the eye */
-.password-wrap input {
-  margin-bottom: 0;
-  padding-right: 50px;
+  display: block; /* Prevents inline spacing issues */
 }
 
 body.dark input {
@@ -155,28 +131,35 @@ body.dark input {
 }
 
 input:focus {
-  background: #fff;
   border-color: var(--accent);
-  box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.15);
+  box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.1);
 }
 
-body.dark input:focus {
-  background: rgba(0, 0, 0, 0.4);
+/* --- Password Wrapper Fix --- */
+.password-wrap {
+  position: relative;
+  width: 100%;
+  margin-bottom: 16px;
 }
 
-/* =====================================================
-   EYE ICON FIX
-===================================================== */
+.password-wrap input {
+  margin-bottom: 0;
+  padding-right: 48px; /* Room for the eye icon */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Ensures long text doesn't stretch box */
+  white-space: nowrap;
+}
+
 .toggle-pass {
   position: absolute;
-  right: 18px;
+  right: 16px;
   top: 50%;
   transform: translateY(-50%);
   font-size: 20px;
   cursor: pointer;
-  opacity: 0.5;
+  opacity: 0.4;
   transition: opacity 0.2s;
-  z-index: 2;
+  z-index: 2; /* Keeps icon above the input text */
 }
 
 .toggle-pass:hover {
@@ -184,78 +167,44 @@ body.dark input:focus {
 }
 
 /* =====================================================
-   CHECKBOX & REMEMBER ME
-===================================================== */
+   CHECKBOX & BUTTON
+==================================================== */
 .remember-row {
   display: flex;
   align-items: center;
-  margin: 10px 0 28px;
+  gap: 10px;
+  margin: 20px 0 28px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-}
-
-.remember-row label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
+  user-select: none;
 }
 
 .remember-row input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
   width: 18px;
   height: 18px;
-  border-radius: 6px; /* Squircle style is more modern than a dot */
-  border: 2px solid var(--accent);
-  background: transparent;
   cursor: pointer;
-  position: relative;
-  transition: all 0.2s ease;
+  accent-color: var(--accent);
   margin: 0;
 }
 
-.remember-row input[type="checkbox"]:checked {
-  background: var(--accent);
-}
-
-.remember-row input[type="checkbox"]::after {
-  content: "\eb7b"; /* Remix Check Icon */
-  font-family: 'remixicon';
-  position: absolute;
-  color: white;
-  font-size: 12px;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%) scale(0);
-  transition: transform 0.2s ease;
-}
-
-.remember-row input[type="checkbox"]:checked::after {
-  transform: translate(-50%, -50%) scale(1);
-}
-
-/* =====================================================
-   LOGIN BUTTON
-===================================================== */
 #loginBtn {
   width: 100%;
   padding: 16px;
-  border-radius: 18px;
+  border-radius: 16px;
   border: none;
-  background: linear-gradient(135deg, #6c63ff, #4f46e5);
+  background: var(--accent);
   color: #fff;
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 10px 20px -5px rgba(108, 99, 255, 0.4);
 }
 
 #loginBtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 25px -5px rgba(108, 99, 255, 0.5);
+  background: var(--accent-hover);
+  transform: translateY(-1px);
 }
 
 #loginBtn:active {
@@ -263,17 +212,28 @@ body.dark input:focus {
 }
 
 /* =====================================================
-   FOOTER
-===================================================== */
+   MESSAGES & FOOTER
+==================================================== */
+#msg {
+  margin-top: 16px;
+  font-size: 13px;
+  color: #ff4d4d;
+  min-height: 16px;
+}
+
 .login-footer {
   margin-top: 32px;
   padding-top: 24px;
-  text-align: center;
   border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 body.dark .login-footer {
   border-top-color: rgba(255, 255, 255, 0.05);
+}
+
+.footer-text {
+  font-size: 14px;
+  opacity: 0.6;
 }
 
 .footer-link {
@@ -282,37 +242,26 @@ body.dark .login-footer {
   color: var(--accent);
   text-decoration: none;
   font-weight: 700;
-  transition: color 0.2s;
 }
 
 .footer-link:hover {
-  color: var(--accent-hover);
   text-decoration: underline;
 }
 
 /* =====================================================
    ANIMATIONS
-===================================================== */
+==================================================== */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(30px); }
+  from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
 /* =====================================================
-   MOBILE OPTIMIZATION
-===================================================== */
-@media (max-width: 480px) {
+   MOBILE
+==================================================== */
+@media (max-width: 400px) {
   .login-card {
-    padding: 32px 24px;
     margin: 15px;
-    border-radius: 24px;
-  }
-  
-  .login-card h1 {
-    font-size: 24px;
+    padding: 32px 24px;
   }
 }
